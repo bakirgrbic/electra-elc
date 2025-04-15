@@ -1,4 +1,6 @@
-"""Tools to finetune pre-trained models using personal evaluation method."""
+"""Tools to finetune pre-trained models on a discriminative text task. This is
+a personal evaluation method.
+"""
 
 import torch
 
@@ -18,9 +20,16 @@ def loss_fn(outputs, targets):
     return torch.nn.CrossEntropyLoss()(outputs, targets)
 
 
-def train(model, training_loader, optimizer):
-    # TODO understand, docstring, and rename
-    """
+def finetune(model, training_loader, optimizer, device):
+    """Finetunes a given model on training data and optimizer.
+
+    Keyword Arguments:
+    model -- torch model to validate
+    training_loader -- torch data loader with train data 
+    optimizer -- torch optimizer
+    device -- which hardware device to use
+    
+    Returns tuple of model guesses and actual label
     """
     model.train()
     for data in tqdm(training_loader):
@@ -37,9 +46,15 @@ def train(model, training_loader, optimizer):
     return loss
 
 
-def validation(model, testing_loader):
-    # TODO understand and docstring
-    """
+def validation(model, testing_loader, device):
+    """Runs a model in evaluation mode to gather guesses and target labels.
+
+    Keyword Arguments:
+    model -- torch model to validate
+    testing_loader -- torch data loader with test data 
+    device -- which hardware device to use
+    
+    Returns tuple of model guesses and actual label
     """
     model.eval()
     fin_targets = []
@@ -56,12 +71,27 @@ def validation(model, testing_loader):
             fin_targets.extend(targets)
     return torch.stack(fin_outputs), torch.stack(fin_targets)
 
-# TODO multilabel dataset?
-# TODO Electra class
-# TODO main training loop?
 
-def main():
-    # TODO
+def evaluate(): # TODO: need data, optimizer, model, and likely device
+    for epoch in range(EPOCHS):
+        log(f"Begining Fine Tuning on Epoch {EPOCHS}") # should have been printing epoch and not EPOCHS
+        loss = train(model, training_loader, optimizer)
+        log(f'Epoch: {epoch}, Loss:  {loss.item()}')
+        guess, targs = validation(model, testing_loader)
+        guesses = torch.argmax(guess, dim=1)
+        targets = targs
+        log(f"Epoch {epoch}'s arracy on test set {accuracy_score(guesses, targets)}")
+    log("Fine-tuning Done!")
+
+
+def main(): # TODO
+    # Define hyperparams and constants
+        # Silent output so its not in terminal?
+        # What about logging? should this func start a new one or simply be passed one?
+    # Get data
+    # Set up datasets and loaders
+    # set up model and tokenizer
+    # call evaluate func
 
 if __name__ == "__main__":
-    main()
+    evaluate()

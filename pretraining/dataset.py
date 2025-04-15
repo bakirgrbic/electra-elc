@@ -7,7 +7,7 @@ class Dataset(torch.utils.data.Dataset):
         """Constructor.
 
         Keyword Arguments:
-        paths -- relative file paths to pre-trained with
+        paths -- relative file paths to for pre-train data
         tokenizer -- tokenizer from transformer lib
         """
         self.paths = paths
@@ -35,21 +35,27 @@ class Dataset(torch.utils.data.Dataset):
         batch = self.tokenizer(line, 
                                max_length=512, 
                                padding='max_length', 
-                               truncation=True) # tokenise all text
+                               truncation=True
+        ) # tokenise all text
+
         labels = torch.tensor(batch['input_ids']) # Ground Truth
         mask = torch.tensor(batch['attention_mask']) # Attention Masks
         input_ids = labels.detach().clone() # Input to be masked
         rand = torch.rand(input_ids.shape)
+
         mask_arr = ((rand < .15) 
                      * (input_ids != 0) 
                      * (input_ids != 2) 
-                     * (input_ids != 3)) # with a probability of 15%, mask a
-                                         # given word, leave out CLS, SEP and
-                                         # PAD
-        input_ids[mask_arr] = 4 # assign token 4 (=MASK)
-        return {'input_ids': input_ids, 
-                'attention_mask': mask, 
-                'labels': labels}
+                     * (input_ids != 3)
+        ) # with a probability of 15%, mask a given word, leave out CLS, SEP 
+          # and PAD
 
-    def __getitem__(self, i: int) -> dict:
-        return self.get_encoding(self.data[i])
+        input_ids[mask_arr] = 4 # assign token 4 (=MASK)
+        return {
+            'input_ids': input_ids, 
+            'attention_mask': mask, 
+            'labels': labels
+        }
+
+    def __getitem__(self, index: int) -> dict:
+        return self.get_encoding(self.data[index])
