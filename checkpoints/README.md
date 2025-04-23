@@ -1,2 +1,5 @@
 # Checkpoints
-Stores checkpoints of models for each epoch they are trained on.
+Stores models after they have finished pre-training.
+
+Models:
+- ELECTRA-PT: tiny ELECTRA Model https://huggingface.co/bsu-slim/electra-tiny
