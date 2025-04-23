@@ -1,20 +1,29 @@
 """Tools to finetune pre-trained models on a discriminative text task. This is
-a personal evaluation method.
+a personal evaluation method. To be used in the root directory of the project.
 """
 
-import torch
+import numpy as np
 from sklearn.metrics import accuracy_score
+import torch
+from tqdm.auto import tqdm
 from transformers import ElectraTokenizerFast
+
+from evaluation.personal_evaluation.electra import ELECTRAClass
+from evaluation.personal_evaluation.multilabeldataset import MultiLabelDataset
+from log.my_logger import get_my_logger, log
+
 
 def load_data() -> tuple:
     """Loads and splits evaluation data into train and test."""
-    X = [line.strip() for line in open('X.txt').readlines()]
-    y = [int(line.strip()) for line in open('YL1.txt').readlines()]
-    train_X = X[:46000]
-    train_y = np.array(y[:46000])
-    test_X = X[46000:]
-    test_y = np.array(y[46000:])
-    return train_X, train_y, test_X, test_y
+    with open('./evaluation/personal_evaluation/X.txt') as f:
+        data = [line.strip() for line in f.readlines()]
+    with open('./evaluation/personal_evaluation/YL1.txt') as f:
+        labels = [int(line.strip()) for line in f.readlines()]
+    train_data = data[:46000]
+    train_labels = np.array(labels[:46000])
+    test_data = data[46000:]
+    test_labels = np.array(labels[46000:])
+    return train_data, train_labels, test_data, test_labels
 
 
 def loss_fn(outputs, targets):
@@ -39,7 +48,7 @@ def finetune(model, training_loader, optimizer, device):
         mask = data['mask'].to(device, dtype=torch.long)
         token_type_ids = data['token_type_ids'].to(device, dtype=torch.long)
         targets = data['targets'].to(device, dtype=torch.long)
-        outputs = model(ids, mask, token_type_ids)
+        outputs = model(ids, mask)
         optimizer.zero_grad()
         loss = loss_fn(outputs, targets)
         optimizer.zero_grad()
@@ -67,7 +76,7 @@ def validation(model, testing_loader, device):
             ids = data['ids'].to(device, dtype=torch.long)
             mask = data['mask'].to(device, dtype=torch.long)
             token_type_ids = data['token_type_ids'].to(device, dtype=torch.long)
-            outputs = model(ids, mask, token_type_ids)
+            outputs = model(ids, mask)
             outputs = torch.sigmoid(outputs).cpu().detach()
             fin_outputs.extend(outputs)
             fin_targets.extend(targets)
@@ -88,7 +97,7 @@ def evaluate(model, training_loader, testing_loader, optimizer, device, epochs, 
     """
     for epoch in range(epochs):
         log(logger, f"Begining Fine Tuning on Epoch {epoch}")
-        loss = train(model, training_loader, optimizer, device)
+        loss = finetune(model, training_loader, optimizer, device)
         log(logger, f'Epoch: {epoch}, Loss:  {loss.item()}')
         guess, targs = validation(model, testing_loader, device)
         guesses = torch.argmax(guess, dim=1)
@@ -97,7 +106,16 @@ def evaluate(model, training_loader, testing_loader, optimizer, device, epochs, 
     log(logger, "Fine-tuning Done!")
 
 
-def personal_evaluation():
+def personal_evaluation(max_len, batch_size, epochs, learning_rate, model_name):
+    """Runs pipeline and logs output to logs/model_name folder in project root
+
+    Keyword Arguments:
+    max_len -- controls maximum length of tokenizer to truncate or pad input
+    batch_size -- size of batches to be fed to model for finetuning
+    epochs -- the number of epochs to finetune model on
+    learning_rate -- learning rate for finetuning
+    model_name -- pretrained torch model to evaluate
+    """
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     labels = {
         0:'Computer Science',
@@ -108,41 +126,37 @@ def personal_evaluation():
         5:'Medical Science',
         6:'Biochemistry'
     }
-    MAX_LEN = 128
-    BATCH_SIZE = 64
-    EPOCHS = 3
     NUM_OUT = len(labels)  # multilabel task
-    LEARNING_RATE = 2e-05
-    MODEL_NAME = "ELECTRA_pt" # TODO: make this and other hyperparams cli inputs
     TASK_NAME = "personal_evaluation"
 
-    logger = get_my_logger(MODEL_NAME, TASK_NAME)
+    logger = get_my_logger(model_name, TASK_NAME)
     log(logger ,"Background logger started")
 
+    log(logger, "Loading tokenizer, model and optimizer")
+    tokenizer = ElectraTokenizerFast.from_pretrained("bsu-slim/electra-tiny")
+    model = ELECTRAClass(model_name, NUM_OUT)
+    model.to(device)
+    optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
+
+
     log(logger, "Loading data for personal evaluation fine-tuning")
-    train_X, train_y, test_X, test_y = load_data()
-    training_data = MultiLabelDataset(train_X, torch.from_numpy(train_y), tokenizer, MAX_LEN)
-    testing_data = MultiLabelDataset(test_X, torch.from_numpy(test_y), tokenizer, MAX_LEN)
-    train_params = {'batch_size': BATCH_SIZE,
+    train_data, train_labels, test_data, test_labels = load_data()
+    training_data = MultiLabelDataset(train_data,
+                                      torch.from_numpy(train_labels),
+                                      tokenizer, max_len)
+    testing_data = MultiLabelDataset(test_data,
+                                     torch.from_numpy(test_labels),
+                                     tokenizer, max_len)
+    train_params = {'batch_size': batch_size,
                 'shuffle': True,
                 'num_workers': 0
                 }
-    test_params = {'batch_size': BATCH_SIZE,
+    test_params = {'batch_size': batch_size,
                     'shuffle': True,
                     'num_workers': 0
                 }
     training_loader = torch.utils.data.DataLoader(training_data, **train_params)
     testing_loader = torch.utils.data.DataLoader(testing_data, **test_params)
 
-    log(logger, "Loading tokenizer, model and optimizer")
-    tokenizer = ElectraTokenizerFast.from_pretrained("bsu-slim/electra-tiny")
-    model = ELECTRAClass(NUM_OUT)
-    model.to(device)
-    optimizer = torch.optim.Adam(params=model.parameters(), lr=LEARNING_RATE)
-
-    log(logger, f"Using {device} to fine-tune for {EPOCHS} epochs!")
-    evaluate(model, training_loader, testing_loader, optimizer, device, EPOCHS):
-    log(logger, "Fine-tuning Done!")
-
-if __name__ == "__main__":
-    main()
+    log(logger, f"Using {device} to fine-tune for {epochs} epochs!")
+    evaluate(model, training_loader, testing_loader, optimizer, device, epochs, logger)

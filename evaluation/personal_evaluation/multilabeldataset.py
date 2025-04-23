@@ -1,4 +1,7 @@
+"""Dataset class used for personal evaluation."""
+
 import torch
+
 
 class MultiLabelDataset(torch.utils.data.Dataset):
     """Loads and preprocesses the given text data."""
@@ -10,8 +13,7 @@ class MultiLabelDataset(torch.utils.data.Dataset):
         text -- text to construct dataset
         labels -- corresponding labels for each text
         tokenizer -- tokenizer from transformer lib
-        max_len -- controls maximum length of tokenizer to truncate or 
-                   pad input
+        max_len -- controls maximum length of tokenizer to truncate or pad input
         """
         self.tokenizer = tokenizer
         self.text = text
@@ -21,7 +23,7 @@ class MultiLabelDataset(torch.utils.data.Dataset):
     def __len__(self) -> int:
         return len(self.text)
 
-    def __getitem__(self, int: index) -> dict:
+    def __getitem__(self, index: int) -> dict:
         """Tokenizes text at a given index."""
         text = self.text[index]
         inputs = self.tokenizer.encode_plus(
