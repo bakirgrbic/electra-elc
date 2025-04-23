@@ -1,4 +1,7 @@
+"""Torch dataset class for pre-training."""
+
 import torch
+
 
 class Dataset(torch.utils.data.Dataset):
     """Loads and preprocesses the given text data."""
@@ -15,6 +18,7 @@ class Dataset(torch.utils.data.Dataset):
         self.data = self._read_files()
 
     def __len__(self) -> int:
+        """Returns length of entire dataset."""
         return len(self.data)
 
     def _read_files(self) -> list[str]:
@@ -58,4 +62,5 @@ class Dataset(torch.utils.data.Dataset):
         }
 
     def __getitem__(self, index: int) -> dict:
+        """Returns tokenized item at a given index."""
         return self.get_encoding(self.data[index])
