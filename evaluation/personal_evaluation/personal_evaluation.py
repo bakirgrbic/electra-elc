@@ -107,7 +107,7 @@ def evaluate(model, training_loader, testing_loader, optimizer, device, epochs, 
 
 
 def personal_evaluation(max_len, batch_size, epochs, learning_rate, model_name):
-    """Runs pipeline and logs output to logs/model_name folder in project root
+    """Runs pipeline and logs output to logs/model_name folder in project root.
 
     Keyword Arguments:
     max_len -- controls maximum length of tokenizer to truncate or pad input

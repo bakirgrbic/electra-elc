@@ -5,7 +5,7 @@ from transformers import ElectraModel
 
 
 class ELECTRAClass(torch.nn.Module):
-    """ELECTRA class for finetuning pretrained ELECTRA models"""
+    """ELECTRA class for finetuning pretrained ELECTRA models."""
 
     def __init__(self, model_path, num_out):
         """Constructor.
