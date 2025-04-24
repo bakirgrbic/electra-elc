@@ -36,9 +36,9 @@ class Dataset(torch.utils.data.Dataset):
 
     def get_encoding(self, line: str) -> dict:
         """Creates an encoding for a given line of input."""
-        batch = self.tokenizer(line, 
-                               max_length=512, 
-                               padding='max_length', 
+        batch = self.tokenizer(line,
+                               max_length=512,
+                               padding='max_length',
                                truncation=True
         ) # tokenise all text
 
@@ -47,11 +47,11 @@ class Dataset(torch.utils.data.Dataset):
         input_ids = labels.detach().clone() # Input to be masked
         rand = torch.rand(input_ids.shape)
 
-        mask_arr = ((rand < .15) 
-                     * (input_ids != 0) 
-                     * (input_ids != 2) 
+        mask_arr = ((rand < .15)
+                     * (input_ids != 0)
+                     * (input_ids != 2)
                      * (input_ids != 3)
-        ) # with a probability of 15%, mask a given word, leave out CLS, SEP 
+        ) # with a probability of 15%, mask a given word, leave out CLS, SEP
           # and PAD
 
         input_ids[mask_arr] = 4 # assign token 4 (=MASK)
