@@ -1,0 +1,10 @@
+INFO 2025-04-24 03:23:35,650 Using ELECTRA_OE to perform pre_training
+INFO 2025-04-24 03:23:35,650 Background logger started
+INFO 2025-04-24 03:23:35,650 Loading optimizer
+INFO 2025-04-24 03:23:35,651 Loading data for pre-training model ELECTRA_OE
+INFO 2025-04-24 03:23:36,083 Using cuda to pre-train for 1 epochs!
+INFO 2025-04-24 03:23:36,298 Begining Training Epoch 0
+INFO 2025-04-24 10:14:40,447 Epoch 0 Mean Training Loss: 0.055123122940622965
+INFO 2025-04-24 10:14:40,447 Pre-training Done!
+INFO 2025-04-24 10:14:40,449 Saving pre-trained model ELECTRA_OE to checkpoints/ELECTRA_OE
+INFO 2025-04-24 10:14:40,509 Saved pre-trained model ELECTRA_OE!
