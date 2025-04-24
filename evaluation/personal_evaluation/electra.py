@@ -15,7 +15,7 @@ class ELECTRAClass(torch.nn.Module):
         num_out -- number of classes to classify
         """
         super().__init__()
-        self.l1 = ElectraModel.from_pretrained(model_path)
+        self.l1 = ElectraModel.from_pretrained(model_path, local_files_only=True)
         self.classifier = torch.nn.Linear(196, num_out)
         self.softmax = torch.nn.Softmax(dim=1)
 

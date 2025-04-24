@@ -130,7 +130,7 @@ def personal_evaluation(max_len, batch_size, epochs, learning_rate, model_name):
     TASK_NAME = "personal_evaluation"
 
     logger = get_my_logger(model_name, TASK_NAME)
-    log(logger ,"Background logger started")
+    log(logger, "Background logger started")
 
     log(logger, "Loading tokenizer, model and optimizer")
     tokenizer = ElectraTokenizerFast.from_pretrained("bsu-slim/electra-tiny")
