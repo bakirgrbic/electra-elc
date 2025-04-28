@@ -74,7 +74,7 @@ def pre_train(tokenizer, model, epochs, learning_rate, model_name):
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
 
     log(logger, f"Loading data for pre-training model {model_name}")
-    data_files = [str(data_file) for data_file in Path("data/train_10M").glob("[!._]]*.train")]
+    data_files = [str(data_file) for data_file in Path("data/train_10M").glob("[!._]*.train")]
     dataset = Dataset(data_files, tokenizer=tokenizer)
     loader = torch.utils.data.DataLoader(dataset, batch_size=8)
 
