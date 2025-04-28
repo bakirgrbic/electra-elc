@@ -1,0 +1,15 @@
+INFO 2025-04-28 14:50:32,539 Using ./checkpoints/ELECTRA_ELC_OE to perform personal_evaluation
+INFO 2025-04-28 14:50:32,540 Background logger started
+INFO 2025-04-28 14:50:32,540 Loading tokenizer, model and optimizer
+INFO 2025-04-28 14:50:33,043 Loading data for personal evaluation fine-tuning
+INFO 2025-04-28 14:50:33,240 Using cuda to fine-tune for 3 epochs!
+INFO 2025-04-28 14:50:33,240 Begining Fine Tuning on Epoch 0
+INFO 2025-04-28 14:52:15,758 Epoch: 0, Loss:  1.8260221481323242
+INFO 2025-04-28 14:52:17,435 Epoch 0's arracy on test set 0.3238578680203046
+INFO 2025-04-28 14:52:17,435 Begining Fine Tuning on Epoch 1
+INFO 2025-04-28 14:54:00,058 Epoch: 1, Loss:  1.712378978729248
+INFO 2025-04-28 14:54:01,777 Epoch 1's arracy on test set 0.38883248730964465
+INFO 2025-04-28 14:54:01,777 Begining Fine Tuning on Epoch 2
+INFO 2025-04-28 14:55:44,444 Epoch: 2, Loss:  1.6224474906921387
+INFO 2025-04-28 14:55:46,149 Epoch 2's arracy on test set 0.44771573604060916
+INFO 2025-04-28 14:55:46,149 Fine-tuning Done!
