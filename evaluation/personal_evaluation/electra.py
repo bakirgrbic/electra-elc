@@ -27,7 +27,6 @@ class ELECTRAClass(torch.nn.Module):
         attention_mask -- attention mask for input_ids, also from tokenizer
 
         Returns the softmax distribution for all classes
-
         """
         output_1 = self.l1(input_ids=input_ids, attention_mask=attention_mask)
         hidden_state = output_1[0]
