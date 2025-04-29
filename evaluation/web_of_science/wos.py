@@ -1,5 +1,5 @@
-"""Tools to finetune pre-trained models on a discriminative text task. This is
-a personal evaluation method. To be used in the root directory of the project.
+"""Tools to finetune pre-trained models on web of science document 
+classification task. To be used in the root directory of the project.
 """
 
 import numpy as np
@@ -8,16 +8,16 @@ import torch
 from tqdm.auto import tqdm
 from transformers import ElectraTokenizerFast
 
-from evaluation.personal_evaluation.electra import ELECTRAClass
-from evaluation.personal_evaluation.multilabeldataset import MultiLabelDataset
+from evaluation.web_of_science.electra import ELECTRAClass
+from evaluation.web_of_science.multilabeldataset import MultiLabelDataset
 from log.my_logger import get_my_logger, log
 
 
 def load_data() -> tuple:
     """Loads and splits evaluation data into train and test."""
-    with open('./evaluation/personal_evaluation/X.txt') as f:
+    with open('./data/web_of_science/X.txt') as f:
         data = [line.strip() for line in f.readlines()]
-    with open('./evaluation/personal_evaluation/YL1.txt') as f:
+    with open('./data/web_of_science/YL1.txt') as f:
         labels = [int(line.strip()) for line in f.readlines()]
     train_data = data[:46000]
     train_labels = np.array(labels[:46000])
@@ -106,7 +106,7 @@ def evaluate(model, training_loader, testing_loader, optimizer, device, epochs, 
     log(logger, "Fine-tuning Done!")
 
 
-def personal_evaluation(max_len, batch_size, epochs, learning_rate, model_name):
+def wos_evaluation(max_len, batch_size, epochs, learning_rate, model_name):
     """Runs pipeline and logs output to logs/model_name folder in project root.
 
     Keyword Arguments:
@@ -127,7 +127,7 @@ def personal_evaluation(max_len, batch_size, epochs, learning_rate, model_name):
         6:'Biochemistry'
     }
     NUM_OUT = len(labels)  # multilabel task
-    TASK_NAME = "personal_evaluation"
+    TASK_NAME = "wos_evaluation"
 
     logger = get_my_logger(model_name, TASK_NAME)
     log(logger, "Background logger started")
