@@ -1,21 +1,22 @@
-"""Defines ELECTRA class used for personal evaluation fine tuning."""
+"""Defines Auto class used for web of science finetuning."""
 
 import torch
-from transformers import ElectraModel
+from transformers import AutoModel
 
 
-class ELECTRAClass(torch.nn.Module):
-    """ELECTRA class for finetuning pretrained ELECTRA models."""
+class AutoClass(torch.nn.Module):
+    """Auto class for finetuning pre-trained models."""
 
     def __init__(self, model_path, num_out):
         """Constructor.
 
         Keyword Arguments:
-        model_path -- relative file path of pre-trained model
+        model_path -- relative file path of pre-trained model or name from 
+                      huggingface
         num_out -- number of classes to classify
         """
         super().__init__()
-        self.l1 = ElectraModel.from_pretrained(model_path, local_files_only=True)
+        self.l1 = AutoModel.from_pretrained(model_path)
         self.classifier = torch.nn.Linear(196, num_out)
         self.softmax = torch.nn.Softmax(dim=1)
 

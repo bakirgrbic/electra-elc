@@ -6,9 +6,8 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 import torch
 from tqdm.auto import tqdm
-from transformers import ElectraTokenizerFast
 
-from evaluation.web_of_science.electra import ELECTRAClass
+from evaluation.web_of_science.auto import AutoClass
 from evaluation.web_of_science.multilabeldataset import MultiLabelDataset
 from log.my_logger import get_my_logger, log
 
@@ -106,10 +105,22 @@ def evaluate(model, training_loader, testing_loader, optimizer, device, epochs, 
     log(logger, "Fine-tuning Done!")
 
 
-def wos_evaluation(max_len, batch_size, epochs, learning_rate, model_name):
+    tokenizer = ElectraTokenizerFast.from_pretrained("bsu-slim/electra-tiny")
+    model = AutoClass(model_name, NUM_OUT)
+
+
+def wos_evaluation(model,
+                   tokenizer,
+                   max_len, 
+                   batch_size, 
+                   epochs, 
+                   learning_rate, 
+                   model_name):
     """Runs pipeline and logs output to logs/model_name folder in project root.
 
     Keyword Arguments:
+    model -- torch model to validate
+    tokenizer -- transformer tokenizer to be used in pre-training
     max_len -- controls maximum length of tokenizer to truncate or pad input
     batch_size -- size of batches to be fed to model for finetuning
     epochs -- the number of epochs to finetune model on
@@ -133,8 +144,6 @@ def wos_evaluation(max_len, batch_size, epochs, learning_rate, model_name):
     log(logger, "Background logger started")
 
     log(logger, "Loading tokenizer, model and optimizer")
-    tokenizer = ElectraTokenizerFast.from_pretrained("bsu-slim/electra-tiny")
-    model = ELECTRAClass(model_name, NUM_OUT)
     model.to(device)
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
 
