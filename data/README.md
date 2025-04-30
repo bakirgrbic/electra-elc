@@ -7,7 +7,9 @@ Data used to pretrain models from the
 ## evaluation_data
 BLiMP and GLUE data to evaluation pretrained models. Also can be found at
 [BabyLM 2024 Data Repository](https://osf.io/ad7qg/files/osfstorage) in 
-addition to other evaluation data that can be used for other tracks.
+addition to other evaluation data that can be used for other tracks. 
+Note: one must download all the data in the evaluation_data folder and place
+it in the root of the evaluation-pipeline-2024 project.
 
 ## web_of_science (WOS)
 Data used to fine-tune models and evaluate their accuracy on document topic
