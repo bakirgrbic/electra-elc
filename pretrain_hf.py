@@ -36,6 +36,6 @@ args = get_args()
 model_name = Path(args.model_config).parts[-1]
 tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_config)
 config = AutoConfig.from_pretrained(args.model_config)
-model = AutoModelForMaskedLM(config)
+model = AutoModelForMaskedLM.from_config(config)
 
 pre_train(tokenizer, model, args.epochs, args.lr, model_name)

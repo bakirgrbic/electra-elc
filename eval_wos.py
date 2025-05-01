@@ -22,8 +22,8 @@ def get_parser() -> argparse.ArgumentParser:
             "--model", 
             type=str, 
             default="bsu-slim/electra-tiny", 
-            help="relative file path of pre-trained model or name from 
-                  huggingface"
+            help="""relative file path of pre-trained model or name from 
+                  huggingface"""
     )
     parser.add_argument("--tokenizer-config", type=str, default="bsu-slim/electra-tiny")
     return parser
@@ -35,7 +35,7 @@ def get_args() -> argparse.Namespace:
 
 args = get_args()
 
-model_name = Path(args.model_config).parts[-1]
+model_name = Path(args.model).parts[-1]
 tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_config)
 model = AutoModel.from_pretrained(args.model)
 
