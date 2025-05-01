@@ -1,0 +1,26 @@
+INFO 2025-04-28 15:23:02,406 Using ELECTRA_ELC to perform pre_training
+INFO 2025-04-28 15:23:02,406 Background logger started
+INFO 2025-04-28 15:23:02,406 Loading optimizer
+INFO 2025-04-28 15:23:02,407 Loading data for pre-training model ELECTRA_ELC
+INFO 2025-04-28 15:23:02,832 Using cuda to pre-train for 9 epochs!
+INFO 2025-04-28 15:23:02,858 Begining Training Epoch 0
+INFO 2025-04-28 22:19:25,627 Epoch 0 Mean Training Loss: 0.05550623353832823
+INFO 2025-04-28 22:19:25,640 Begining Training Epoch 1
+INFO 2025-04-29 05:15:35,090 Epoch 1 Mean Training Loss: 0.021863119993475427
+INFO 2025-04-29 05:15:35,103 Begining Training Epoch 2
+INFO 2025-04-29 12:11:22,299 Epoch 2 Mean Training Loss: 0.019852566252345216
+INFO 2025-04-29 12:11:22,308 Begining Training Epoch 3
+INFO 2025-04-29 19:07:26,592 Epoch 3 Mean Training Loss: 0.018529137477476938
+INFO 2025-04-29 19:07:26,604 Begining Training Epoch 4
+INFO 2025-04-30 02:03:30,308 Epoch 4 Mean Training Loss: 0.017910530738271424
+INFO 2025-04-30 02:03:30,320 Begining Training Epoch 5
+INFO 2025-04-30 09:11:57,896 Epoch 5 Mean Training Loss: 0.01739111361368929
+INFO 2025-04-30 09:11:57,908 Begining Training Epoch 6
+INFO 2025-04-30 16:07:36,501 Epoch 6 Mean Training Loss: 0.017034095114864565
+INFO 2025-04-30 16:07:36,512 Begining Training Epoch 7
+INFO 2025-05-01 02:43:58,836 Epoch 7 Mean Training Loss: 0.016756289939368712
+INFO 2025-05-01 02:43:58,848 Begining Training Epoch 8
+INFO 2025-05-01 09:39:24,107 Epoch 8 Mean Training Loss: 0.01657878685340178
+INFO 2025-05-01 09:39:24,107 Pre-training Done!
+INFO 2025-05-01 09:39:24,110 Saving pre-trained model ELECTRA_ELC to checkpoints/ELECTRA_ELC
+INFO 2025-05-01 09:39:24,163 Saved pre-trained model ELECTRA_ELC!
