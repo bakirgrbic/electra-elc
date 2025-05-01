@@ -25,7 +25,8 @@ TODO script
 2. Make sure `evaluation_data` directory is in the root of `evaluation-pipeline-2024` project
 3. Move files from `tokenizer` directory to the `checkpoint/MODEL_NAME` for the model that will be evaluated
 4. Open a terminal in the the root of `evaluation-pipeline-2024` project.
-    To Evaluate on BLiMP first modify the `./eval_blimp.sh` script to be the following
+
+To Evaluate on BLiMP first modify the `./eval_blimp.sh` script to be the following
 ```shell
 #!/bin/bash
 
@@ -40,16 +41,16 @@ python -m lm_eval --model hf-mlm \
     --log_samples \
     --output_path results/blimp/${MODEL_BASENAME}/blimp_results.json
 ```
-    Run the following command to evaluate on BLiMP for given model path such as ELECTRA_PT.
+Run the following command to evaluate on BLiMP for given model path such as ELECTRA_PT.
 ```[shell](shell)
 ./eval_blimp.sh ../../checkpoints/ELECTRA_PT
 ```
 
-    To Evaluate on (Super)GLUE run the following command:
+To Evaluate on (Super)GLUE run the following command:
 ```shell
 ./finetune_model.sh PATH_TO_MODEL
 ```
-    NOTE: If (Super)GLUE evalution is not working make sure transormers lib is version 4.49.0 
+NOTE: If (Super)GLUE evalution is not working make sure transormers lib is version 4.49.0 
 
 Results for these evaluations will be found in the `evaluation-pipeline-2024/results`
 
