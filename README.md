@@ -11,14 +11,36 @@ When running on AWS Sagemaker make sure to install the `transformers` and
 
 ### Pretraining
 Tested to work with ELECTRA and BERT models.
-TODO notebook
-TODO scripts
+
+#### Notebook
+1. Launch jupyterlab and open `Pretraining.ipynb`.
+2. Run the cells to pretrain model in the notebook or one from hugging face.
+
+
+#### Scripts
+To pretrain a model from huggingface use the following command:
+```shell
+./pretrain_hf.py [-h] [--epochs EPOCHS] [--lr LR] [--model-config MODEL_CONFIG] [--tokenizer-config TOKENIZER_CONFIG]
+```
+
+To pretrain the ELECTRA_ELC model use the following command:
+```shell
+./pretrain_electra_elc.py [-h] [--epochs EPOCHS] [--lr LR]                                                                                                                   
+```
 
 ### Evaluation
 #### Web of Science Classification
 Tested to work with ELECTRA and BERT models.
-TODO notebook
-TODO script
+
+##### Notebook
+1. Launch jupyterlab and open `Model Evaluation.ipynb`.
+2. Run the cells to finetune model and evaluate on this task.
+
+##### Script
+To pretrain the ELECTRA_ELC model use the following command:
+```shell
+./eval_wos.py [-h] [--max-len MAX_LEN] [--batch-size BATCH_SIZE] [--epochs EPOCHS] [--lr LR] [--model MODEL] [--tokenizer-config TOKENIZER_CONFIG]                           
+```
 
 #### evaluation-pipeline-2024
 1. Follow [Install](https://github.com/babylm/evaluation-pipeline-2024/tree/main?tab=readme-ov-file#install) and [Data](https://github.com/babylm/evaluation-pipeline-2024/tree/main?tab=readme-ov-file#data) instructions from the original evaluation repository. If using AWS install all libraries with pip in a terminal.
@@ -42,7 +64,7 @@ python -m lm_eval --model hf-mlm \
     --output_path results/blimp/${MODEL_BASENAME}/blimp_results.json
 ```
 Run the following command to evaluate on BLiMP for given model path such as ELECTRA_PT.
-```[shell](shell)
+```shell
 ./eval_blimp.sh ../../checkpoints/ELECTRA_PT
 ```
 
