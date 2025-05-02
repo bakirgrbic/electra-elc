@@ -9,8 +9,13 @@ Tested on MacOS and AWS Sagemaker environments.
 When running on AWS Sagemaker make sure to install the `transformers` and 
 `torch` libraries.
 
+NOTE:
+This project is still a work in progress.
+- ELC-BERT doesn't work with eval_wos.py and eval_blimp.sh. Not tested for finetune.sh
+- ELECTRA-ELC doesn't work with eval_wos.py and not tested for finetune.sh
+- ELECTRA-PT work with all scripts (This is a vanilla ELECTRA-tiny)
+
 ### Pretraining
-Tested to work with ELECTRA and BERT models.
 
 #### Notebook
 1. Launch jupyterlab and open `Pretraining.ipynb`.
@@ -30,7 +35,6 @@ To pretrain the ELECTRA_ELC model use the following command:
 
 ### Evaluation
 #### Web of Science Classification
-Tested to work with ELECTRA and BERT models.
 
 ##### Notebook
 1. Launch jupyterlab and open `Model Evaluation.ipynb`.
