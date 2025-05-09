@@ -17,12 +17,6 @@ This project is still a work in progress.
 
 ### Pretraining
 
-#### Notebook
-1. Launch jupyterlab and open `Pretraining.ipynb`.
-2. Run the cells to pretrain model in the notebook or one from hugging face.
-
-
-#### Scripts
 To pretrain a model from huggingface use the following command:
 ```shell
 ./pretrain_hf.py [-h] [--epochs EPOCHS] [--lr LR] [--model-config MODEL_CONFIG] [--tokenizer-config TOKENIZER_CONFIG]
@@ -36,11 +30,6 @@ To pretrain the ELECTRA_ELC model use the following command:
 ### Evaluation
 #### Web of Science Classification
 
-##### Notebook
-1. Launch jupyterlab and open `Model Evaluation.ipynb`.
-2. Run the cells to finetune model and evaluate on this task.
-
-##### Script
 To pretrain the ELECTRA_ELC model use the following command:
 ```shell
 ./eval_wos.py [-h] [--max-len MAX_LEN] [--batch-size BATCH_SIZE] [--epochs EPOCHS] [--lr LR] [--model MODEL] [--tokenizer-config TOKENIZER_CONFIG]                           
