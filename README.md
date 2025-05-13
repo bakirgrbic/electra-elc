@@ -13,7 +13,15 @@ This project is still a work in progress.
 ## How to Run
 Tested on MacOS and AWS Sagemaker environments. 
 When running on AWS Sagemaker make sure to install the `transformers` and 
-`torch` libraries.
+`torch` libraries. To use any pretrained models from this repository do the following:
+1. Install [git-lfs](https://git-lfs.com/)
+2. Run the following commands to pull the four models
+```shell
+git lfs fetch --all
+```
+```shell
+git lfs checkout
+```
 
 ### Data
 Make sure to download necessary data as described in [data/README.md](./data/README.md). All data must be in 
