@@ -1,4 +1,4 @@
-# cs-nlp-finalproject
+# electra-elc
 
 ## Description
 Final project for CS 436 to learn more about pre-training and time 
