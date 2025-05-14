@@ -32,7 +32,7 @@ the `data` directory except for the BabyLM 2024 evaluation pipeline data which m
 
 To pretrain a model from huggingface use the following command:
 ```shell
-./pretrain_hf.py [-h] [--epochs EPOCHS] [--lr LR] [--model-config MODEL_CONFIG] [--tokenizer-config TOKENIZER_CONFIG]
+./pretrain_hf.py [-h] [--model-config MODEL_CONFIG] [--tokenizer-config TOKENIZER_CONFIG] [--epochs EPOCHS] [--lr LR]
 ```
 
 To pretrain the ELECTRA_ELC model use the following command:
@@ -45,7 +45,7 @@ To pretrain the ELECTRA_ELC model use the following command:
 
 To pretrain the ELECTRA_ELC model use the following command:
 ```shell
-./eval_wos.py [-h] [--max-len MAX_LEN] [--batch-size BATCH_SIZE] [--epochs EPOCHS] [--lr LR] [--model MODEL] [--tokenizer-config TOKENIZER_CONFIG]                           
+./eval_wos.py [-h] [--model MODEL] [--tokenizer-config TOKENIZER_CONFIG] [--max-len MAX_LEN] [--batch-size BATCH_SIZE] [--epochs EPOCHS] [--lr LR]
 ```
 
 #### evaluation-pipeline-2024

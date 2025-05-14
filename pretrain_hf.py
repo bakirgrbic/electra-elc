@@ -12,24 +12,34 @@ from pretraining.pretraining import pre_train
 
 
 def get_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="""Script that pretrains models 
-                                                    from huggingface."""
+    parser = argparse.ArgumentParser(
+        description="""Script that pretrains models
+                          from huggingface."""
+    )
+    parser.add_argument(
+        "--model-config",
+        type=str,
+        default="bsu-slim/electra-tiny",
+        help="Name of model to pull from huggingface. Default is electra-tiny.",
+    )
+    parser.add_argument(
+        "--tokenizer-config",
+        type=str,
+        default="bsu-slim/electra-tiny",
+        help="""Name of tokenizer to pull from huggingface.
+                        Default is electra-tiny.""",
     )
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--lr", type=float, default=1e-04, help="learning rate")
-    parser.add_argument(
-            "--model-config", 
-            type=str, 
-            default="bsu-slim/electra-tiny", 
-            help="name of model to pull from huggingface"
-    )
-    parser.add_argument("--tokenizer-config", type=str, default="bsu-slim/electra-tiny")
+
     return parser
 
 
 def get_args() -> argparse.Namespace:
     parser = get_parser()
+
     return parser.parse_known_args()[0]
+
 
 args = get_args()
 
