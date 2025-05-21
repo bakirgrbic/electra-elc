@@ -45,16 +45,14 @@ def get_args() -> argparse.Namespace:
 
 args = get_args()
 
-model_name = Path(args.model).parts[-1]
+model_name = args.model
 tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_config)
-model = AutoModel.from_pretrained(args.model)
 
 wos_evaluation(
-    model,
-    tokenizer,
-    args.max_len,
-    args.batch_size,
-    args.epochs,
-    args.lr,
-    model_name
+   model_name,
+   tokenizer,
+   args.max_len,
+   args.batch_size,
+   args.epochs,
+   args.lr,
 )
