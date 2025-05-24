@@ -28,7 +28,14 @@ class TestWos(unittest.TestCase):
         EXPECTED_TEST_LABEL = 6
         FIRST_SAMPLE = 0
 
-        self.assertEqual(self.data[self.TRAIN_DATA][FIRST_SAMPLE][:CHARS_TO_TEST], TRAIN_DATA_25_CHARS)
-        self.assertEqual(self.data[self.TRAIN_LABELS][FIRST_SAMPLE], EXPECTED_TRAIN_LABEL)
-        self.assertEqual(self.data[self.TEST_DATA][FIRST_SAMPLE][:CHARS_TO_TEST], TEST_DATA_25_CHARS)
+        self.assertEqual(
+            self.data[self.TRAIN_DATA][FIRST_SAMPLE][:CHARS_TO_TEST],
+            TRAIN_DATA_25_CHARS,
+        )
+        self.assertEqual(
+            self.data[self.TRAIN_LABELS][FIRST_SAMPLE], EXPECTED_TRAIN_LABEL
+        )
+        self.assertEqual(
+            self.data[self.TEST_DATA][FIRST_SAMPLE][:CHARS_TO_TEST], TEST_DATA_25_CHARS
+        )
         self.assertEqual(self.data[self.TEST_LABELS][FIRST_SAMPLE], EXPECTED_TEST_LABEL)

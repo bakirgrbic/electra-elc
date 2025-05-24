@@ -21,6 +21,7 @@ def train(model, loader, optimizer, device, epochs, logger):
     epochs -- the number of epochs to pre-train model on
     logger -- logging.Logger object to log information
     """
+
     for epoch in range(epochs):
         loop = tqdm(loader, leave=True)
         model.train()
@@ -30,9 +31,9 @@ def train(model, loader, optimizer, device, epochs, logger):
         for batch in loop:
             optimizer.zero_grad()
 
-            input_ids = batch['input_ids'].to(device)
-            attention_mask = batch['attention_mask'].to(device)
-            labels = batch['labels'].to(device)
+            input_ids = batch["input_ids"].to(device)
+            attention_mask = batch["attention_mask"].to(device)
+            labels = batch["labels"].to(device)
 
             outputs = model(input_ids, attention_mask=attention_mask, labels=labels)
 
@@ -41,7 +42,7 @@ def train(model, loader, optimizer, device, epochs, logger):
 
             optimizer.step()
 
-            loop.set_description(f'Epoch {epoch}')
+            loop.set_description(f"Epoch {epoch}")
             loop.set_postfix(loss=loss.item())
             losses.append(loss.item())
 
@@ -64,7 +65,7 @@ def pre_train(tokenizer, model, epochs, learning_rate, model_name):
     learning_rate -- learning rate for the optimizer
     model_name -- name to save model by
     """
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = "cuda" if torch.cuda.is_available() else "cpu"
     TASK_NAME = "pre_training"
 
     logger = get_my_logger(model_name, TASK_NAME)
@@ -74,7 +75,9 @@ def pre_train(tokenizer, model, epochs, learning_rate, model_name):
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
 
     log(logger, f"Loading data for pre-training model {model_name}")
-    data_files = [str(data_file) for data_file in Path("data/train_10M").glob("[!._]*.train")]
+    data_files = [
+        str(data_file) for data_file in Path("data/train_10M").glob("[!._]*.train")
+    ]
     dataset = Dataset(data_files, tokenizer=tokenizer)
     loader = torch.utils.data.DataLoader(dataset, batch_size=8)
 
