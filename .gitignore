@@ -181,4 +181,4 @@ cython_debug/
 *.dev
 
 # wos data
-web_of_science/
+wos/

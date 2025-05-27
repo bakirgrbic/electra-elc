@@ -15,5 +15,5 @@ it in the root of the evaluation-pipeline-2024 project.
 Data used to fine-tune models and evaluate their accuracy on document topic
 classification. The specific [WOS](https://data.mendeley.com/datasets/9rw3vkcfy4/6) 
 data used for evaluation was in Web of Science Dataset WOS-46985, 
-files `X.txt` and `YL1.txt`. Place these into a folder called `web_of_science`
+files `X.txt` and `YL1.txt`. Place these into a folder called `wos`
 in the `data` directory.
