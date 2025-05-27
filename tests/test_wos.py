@@ -14,11 +14,12 @@ class TestWos(unittest.TestCase):
     def test_load_non_empty_data(self):
         TRAIN_lENGTH = 46000
         TEST_LENGTH = 985
+        ERR_MESSAGE = "No evaluation data found in data/web_of_science/"
 
-        self.assertEqual(len(self.data[self.TRAIN_DATA]), TRAIN_lENGTH)
-        self.assertEqual(len(self.data[self.TRAIN_LABELS]), TRAIN_lENGTH)
-        self.assertEqual(len(self.data[self.TEST_DATA]), TEST_LENGTH)
-        self.assertEqual(len(self.data[self.TEST_LABELS]), TEST_LENGTH)
+        self.assertEqual(len(self.data[self.TRAIN_DATA]), TRAIN_lENGTH, ERR_MESSAGE)
+        self.assertEqual(len(self.data[self.TRAIN_LABELS]), TRAIN_lENGTH, ERR_MESSAGE)
+        self.assertEqual(len(self.data[self.TEST_DATA]), TEST_LENGTH, ERR_MESSAGE)
+        self.assertEqual(len(self.data[self.TEST_LABELS]), TEST_LENGTH, ERR_MESSAGE)
 
     def test_first_sample_matches_for_train_and_data(self):
         CHARS_TO_TEST = 25
