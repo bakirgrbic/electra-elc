@@ -1,14 +1,19 @@
 """Dataset class used for web of science evaluation."""
 
-import torch
 import numpy as np
+import torch
+import transformers
 
 
 class MultiLabelDataset(torch.utils.data.Dataset):
     """Loads and preprocesses the given text data."""
 
     def __init__(
-        self, text: list[str], labels: np.ndarray, tokenizer, max_len: int
+        self,
+        text: list[str],
+        labels: np.ndarray,
+        tokenizer: transformers.AutoTokenizer,
+        max_len: int,
     ) -> None:
         """Constructor.
 
@@ -16,7 +21,7 @@ class MultiLabelDataset(torch.utils.data.Dataset):
         text -- text to construct dataset
         labels -- corresponding labels for each text
         tokenizer -- transformer tokenizer
-        max_len -- controls maximum length of tokenizer to truncate or pad input
+        max_len -- maximum length of words tokenizer will read for a given text
         """
         self.text = text
         self.targets = labels
@@ -25,6 +30,7 @@ class MultiLabelDataset(torch.utils.data.Dataset):
 
     def __len__(self) -> int:
         """Returns the total number of documents to finetune on."""
+
         return len(self.text)
 
     def __getitem__(self, index: int) -> dict[str, torch.LongTensor]:
