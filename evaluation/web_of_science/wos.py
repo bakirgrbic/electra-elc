@@ -33,7 +33,12 @@ def loss_fn(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
     return torch.nn.CrossEntropyLoss()(outputs, targets)
 
 
-def train(model: AutoClass, training_loader, optimizer: torch.optim.Adam, device: str):
+def train(
+    model: AutoClass,
+    training_loader: torch.utils.data.DataLoader,
+    optimizer: torch.optim.Adam,
+    device: str,
+):
     """Training loop for finetuning on wos task.
 
     Keyword Arguments:
@@ -42,7 +47,7 @@ def train(model: AutoClass, training_loader, optimizer: torch.optim.Adam, device
     optimizer -- torch optimizer
     device -- which hardware device to use
 
-    Returns tuple of model guesses and actual label
+    Returns loss for training epoch
     """
     model.train()
 
@@ -51,7 +56,6 @@ def train(model: AutoClass, training_loader, optimizer: torch.optim.Adam, device
         mask = data["mask"].to(device, dtype=torch.long)
         targets = data["targets"].to(device, dtype=torch.long)
         outputs = model(ids, mask)
-        optimizer.zero_grad()
         loss = loss_fn(outputs, targets)
         optimizer.zero_grad()
         loss.backward()
