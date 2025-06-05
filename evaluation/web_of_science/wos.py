@@ -38,7 +38,7 @@ def train(
     training_loader: torch.utils.data.DataLoader,
     optimizer: torch.optim.Adam,
     device: str,
-):
+) -> torch.Tensor:
     """Training loop for finetuning on wos task.
 
     Keyword Arguments:
@@ -65,7 +65,7 @@ def train(
 
 
 def test(
-    model: AutoClass, testing_loader, device: str
+    model: AutoClass, testing_loader: torch.utils.data.DataLoader, device: str
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Testing loop for finetuning on wos task.
 
@@ -81,11 +81,11 @@ def test(
     fin_outputs = []
     with torch.no_grad():
         for data in tqdm(testing_loader):
-            targets = data["targets"]
             ids = data["ids"].to(device, dtype=torch.long)
             mask = data["mask"].to(device, dtype=torch.long)
+            targets = data["targets"]
             outputs = model(ids, mask)
-            outputs = torch.sigmoid(outputs).cpu().detach()
+            outputs = torch.nn.softmax(input=outputs, dim=1).cpu().detach()
             fin_outputs.extend(outputs)
             fin_targets.extend(targets)
 
