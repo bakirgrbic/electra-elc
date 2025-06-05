@@ -16,9 +16,8 @@ class AutoClass(torch.nn.Module):
         num_out -- number of classes to classify
         """
         super().__init__()
-        self.l1 = AutoModel.from_pretrained(model_name)
+        self.transformer_layer = AutoModel.from_pretrained(model_name)
         self.classifier = torch.nn.Linear(196, num_out)
-        self.softmax = torch.nn.Softmax(dim=1)
 
     def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor):
         """Runs a piece of tokenized data through the model.
@@ -29,10 +28,9 @@ class AutoClass(torch.nn.Module):
 
         Returns the softmax distribution for all classes
         """
-        output_1 = self.l1(input_ids=input_ids, attention_mask=attention_mask)
-        hidden_state = output_1[0]
-        pooler = hidden_state[:, 0]
-        output = self.classifier(pooler)
-        output = self.softmax(output)
+        output_transformer = self.transformer_layer(input_ids=input_ids, attention_mask=attention_mask)
+        last_hidden_state = output_transformer.last_hidden_state
+        cls_pooler = last_hidden_state[:, 0]
+        output = self.classifier(cls_pooler)
 
         return output
