@@ -19,11 +19,11 @@ from log.my_logger import get_my_logger, log
 class DocumentTopics(Enum):
     COMPUTER_SCIENCE = 0
     ELECTRICAL_ENGINEERING = 1
-    PSYCHOLOGY = 3
-    MECHANICAL_ENGINEERING = 4
-    CIVIL_ENGINEERING = 5
-    MEDICAL_SCIENCE = 6
-    BIOCHEMISTRY = 7
+    PSYCHOLOGY = 2
+    MECHANICAL_ENGINEERING = 3
+    CIVIL_ENGINEERING = 4
+    MEDICAL_SCIENCE = 5
+    BIOCHEMISTRY = 6
 
 
 def load_data() -> tuple[list[str], np.ndarray, list[str], np.ndarray]:
