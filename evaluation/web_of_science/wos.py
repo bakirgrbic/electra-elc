@@ -2,6 +2,7 @@
 classification task.
 """
 
+from enum import Enum
 import logging
 
 import numpy as np
@@ -13,6 +14,16 @@ from tqdm.auto import tqdm
 from evaluation.web_of_science.auto import AutoClass
 from evaluation.web_of_science.multilabeldataset import MultiLabelDataset
 from log.my_logger import get_my_logger, log
+
+
+class DocumentTopics(Enum):
+    COMPUTER_SCIENCE = 0
+    ELECTRICAL_ENGINEERING = 1
+    PSYCHOLOGY = 3
+    MECHANICAL_ENGINEERING = 4
+    CIVIL_ENGINEERING = 5
+    MEDICAL_SCIENCE = 6
+    BIOCHEMISTRY = 7
 
 
 def load_data() -> tuple[list[str], np.ndarray, list[str], np.ndarray]:
@@ -151,16 +162,7 @@ def wos_evaluation(
     """
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    labels = {
-        0: "Computer Science",
-        1: "Electrical Engineering",
-        2: "Psychology",
-        3: "Mechanical Engineering",
-        4: "Civil Engineering",
-        5: "Medical Science",
-        6: "Biochemistry",
-    }
-    NUM_OUT = len(labels)
+    NUM_OUT = len(DocumentTopics)
     TASK_NAME = "wos_evaluation"
 
     logger = get_my_logger(model_name, TASK_NAME)
