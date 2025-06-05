@@ -2,6 +2,8 @@
 classification task.
 """
 
+import logging
+
 import numpy as np
 from sklearn.metrics import accuracy_score
 import torch
@@ -92,16 +94,16 @@ def test(
     return torch.stack(fin_outputs), torch.stack(fin_targets)
 
 
-def evaluate(
-    model,
-    training_loader,
-    testing_loader,
+def finetune(
+    model: AutoClass,
+    training_loader: torch.utils.data.DataLoader,
+    testing_loader: torch.utils.data.DataLoader,
     optimizer: torch.optim.Adam,
     device: str,
     epochs: int,
-    logger: log.my_logger,
-):
-    """Main finetuning loop that runs training and testing loops.
+    logger: logging.Logger,
+) -> None:
+    """Main loop that runs training and testing loops.
 
     Keyword Arguments:
     model -- torch model to validate
@@ -117,9 +119,8 @@ def evaluate(
         log(logger, f"Begining Fine Tuning on Epoch {epoch}")
         loss = train(model, training_loader, optimizer, device)
         log(logger, f"Epoch: {epoch}, Loss:  {loss.item()}")
-        guess, targs = test(model, testing_loader, device)
+        guess, targets = test(model, testing_loader, device)
         guesses = torch.argmax(guess, dim=1)
-        targets = targs
         log(
             logger,
             f"Epoch {epoch}'s arracy on test set {accuracy_score(guesses, targets)}",
@@ -184,4 +185,4 @@ def wos_evaluation(
     testing_loader = torch.utils.data.DataLoader(testing_data, **test_params)
 
     log(logger, f"Using {device} to fine-tune for {epochs} epochs!")
-    evaluate(model, training_loader, testing_loader, optimizer, device, epochs, logger)
+    finetune(model, training_loader, testing_loader, optimizer, device, epochs, logger)
