@@ -37,6 +37,7 @@ def get_my_logger(model_name, task_name):
 
 def log(logger, message, message_type='info'):
     """Logs a message to appropriate type given a logging.Logger object"""
+    print(message)
     if message_type == 'info':
         logger.info(message)
     elif message_type == 'warning':
