@@ -5,7 +5,7 @@ CONDA_INIT = source $$(conda info --base)/etc/profile.d/conda.sh ; conda activat
 
 .PHONY: test
 test:
-	@$(CONDA_INIT) conda activate bblm ; python3 -m unittest tests/*.py
+	@$(CONDA_INIT) conda activate bblm ; python3 -m pytest tests/
 
 .PHONY: env
 env:
