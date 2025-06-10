@@ -98,7 +98,7 @@ def test(
             mask = data["mask"].to(device, dtype=torch.long)
             targets = data["targets"]
             outputs = model(ids, mask)
-            outputs = torch.nn.softmax(input=outputs, dim=1).cpu().detach()
+            outputs = torch.softmax(input=outputs, dim=1).cpu().detach()
             fin_outputs.extend(outputs)
             fin_targets.extend(targets)
 
@@ -175,16 +175,20 @@ def wos_evaluation(
 
     log(logger, "Loading data for personal evaluation fine-tuning")
     train_data, train_labels, test_data, test_labels = load_data()
-    training_data = MultiLabelDataset(
+
+    train_dataset = MultiLabelDataset(
         train_data, torch.from_numpy(train_labels), tokenizer, max_len
     )
-    testing_data = MultiLabelDataset(
+    test_dataset = MultiLabelDataset(
         test_data, torch.from_numpy(test_labels), tokenizer, max_len
     )
-    train_params = {"batch_size": batch_size, "shuffle": True, "num_workers": 0}
-    test_params = {"batch_size": batch_size, "shuffle": True, "num_workers": 0}
-    training_loader = torch.utils.data.DataLoader(training_data, **train_params)
-    testing_loader = torch.utils.data.DataLoader(testing_data, **test_params)
+
+    training_loader = torch.utils.data.DataLoader(
+        dataset=train_dataset, batch_size=batch_size, shuffle=True, num_workers=0
+    )
+    testing_loader = torch.utils.data.DataLoader(
+        dataset=test_dataset, batch_size=batch_size, shuffle=True, num_workers=0
+    )
 
     log(logger, f"Using {device} to fine-tune for {epochs} epochs!")
     finetune(model, training_loader, testing_loader, optimizer, device, epochs, logger)
