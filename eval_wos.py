@@ -2,12 +2,10 @@
 """Script that runs web of science evaluation pipeline."""
 
 import argparse
-from pathlib import Path
 
 from transformers import AutoTokenizer
-from transformers import AutoModel
 
-from evaluation.web_of_science.wos import wos_evaluation
+from evaluation.web_of_science.wos import load_data, create_dataloaders, wos_evaluation
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -48,11 +46,23 @@ args = get_args()
 model_name = args.model
 tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_config)
 
+train_data, train_labels, test_data, test_labels = load_data()
+
+training_loader, testing_loader = create_dataloaders(
+    train_data,
+    train_labels,
+    test_data,
+    test_labels,
+    tokenizer,
+    args.max_len,
+    args.batch_size,
+)
+
+
 wos_evaluation(
-   model_name,
-   tokenizer,
-   args.max_len,
-   args.batch_size,
-   args.epochs,
-   args.lr,
+    model_name,
+    training_loader,
+    testing_loader,
+    args.epochs,
+    args.lr,
 )
