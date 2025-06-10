@@ -1,5 +1,6 @@
 .DS_Store
 tmp/
+log/electra-tiny
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
