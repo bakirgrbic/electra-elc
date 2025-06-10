@@ -1,6 +1,5 @@
 """Dataset class used for web of science evaluation."""
 
-import numpy as np
 import torch
 import transformers
 
@@ -11,7 +10,7 @@ class MultiLabelDataset(torch.utils.data.Dataset):
     def __init__(
         self,
         text: list[str],
-        labels: np.ndarray,
+        labels: torch.Tensor,
         tokenizer: transformers.AutoTokenizer,
         max_len: int,
     ) -> None:
@@ -33,7 +32,7 @@ class MultiLabelDataset(torch.utils.data.Dataset):
 
         return len(self.text)
 
-    def __getitem__(self, index: int) -> dict[str, torch.LongTensor]:
+    def __getitem__(self, index: int) -> dict[str, torch.Tensor]:
         """Returns text from specific index with tokenized information."""
         text = self.text[index]
         inputs = self.tokenizer(
