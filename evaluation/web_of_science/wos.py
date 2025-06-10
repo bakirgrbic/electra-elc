@@ -40,6 +40,45 @@ def load_data() -> tuple[list[str], np.ndarray, list[str], np.ndarray]:
     return train_data, train_labels, test_data, test_labels
 
 
+def create_dataloaders(
+    train_data: list[str],
+    train_labels: np.ndarray,
+    test_data: list[str],
+    test_labels: np.ndarray,
+    tokenizer: transformers.AutoTokenizer,
+    max_len: int,
+    batch_size: int,
+) -> tuple[torch.utils.data.DataLoader, torch.utils.data.DataLoader]:
+    """Creates train and test data loaders for finetuning.
+
+    Keyword Arguments:
+    train_data -- list of documents
+    train_labels -- list of labels corresponding to training documents
+    test_data -- list of documents
+    test_labels -- list of labels corresponding to training documents
+    tokenizer -- transformer tokenizer
+    max_len -- maximum length of words tokenizer will read for a given text
+    batch_size -- size of batches to be fed to model for finetuning
+
+    Returns training and testing loaders as a tuple
+    """
+    train_dataset = MultiLabelDataset(
+        train_data, torch.from_numpy(train_labels), tokenizer, max_len
+    )
+    test_dataset = MultiLabelDataset(
+        test_data, torch.from_numpy(test_labels), tokenizer, max_len
+    )
+
+    training_loader = torch.utils.data.DataLoader(
+        dataset=train_dataset, batch_size=batch_size, shuffle=True, num_workers=0
+    )
+    testing_loader = torch.utils.data.DataLoader(
+        dataset=test_dataset, batch_size=batch_size, shuffle=True, num_workers=0
+    )
+
+    return training_loader, testing_loader
+
+
 def loss_fn(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
     """Loss function used for evaluation."""
 
@@ -141,9 +180,8 @@ def finetune(
 
 def wos_evaluation(
     model_name: str,
-    tokenizer: transformers.AutoTokenizer,
-    max_len: int,
-    batch_size: int,
+    training_loader: torch.utils.data.DataLoader,
+    testing_loader: torch.utils.data.DataLoader,
     epochs: int,
     learning_rate: float,
 ):
@@ -152,9 +190,8 @@ def wos_evaluation(
     Keyword Arguments:
     model_name -- relative file path of pre-trained model or name from
                   huggingface
-    tokenizer -- transformer tokenizer
-    max_len -- maximum length of words tokenizer will read for a given text
-    batch_size -- size of batches to be fed to model for finetuning
+    training_loader -- train data loader
+    testing_loader -- test data loader
     epochs -- the number of epochs to finetune model on
     learning_rate -- learning rate for finetuning
 
@@ -172,23 +209,6 @@ def wos_evaluation(
     model = AutoClass(model_name, NUM_OUT)
     model.to(device)
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
-
-    log(logger, "Loading data for personal evaluation fine-tuning")
-    train_data, train_labels, test_data, test_labels = load_data()
-
-    train_dataset = MultiLabelDataset(
-        train_data, torch.from_numpy(train_labels), tokenizer, max_len
-    )
-    test_dataset = MultiLabelDataset(
-        test_data, torch.from_numpy(test_labels), tokenizer, max_len
-    )
-
-    training_loader = torch.utils.data.DataLoader(
-        dataset=train_dataset, batch_size=batch_size, shuffle=True, num_workers=0
-    )
-    testing_loader = torch.utils.data.DataLoader(
-        dataset=test_dataset, batch_size=batch_size, shuffle=True, num_workers=0
-    )
 
     log(logger, f"Using {device} to fine-tune for {epochs} epochs!")
     finetune(model, training_loader, testing_loader, optimizer, device, epochs, logger)

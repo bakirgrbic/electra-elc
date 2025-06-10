@@ -3,9 +3,17 @@ SHELL = /bin/zsh
 # conda
 CONDA_INIT = source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ;
 
-.PHONY: test
-test:
-	@$(CONDA_INIT) conda activate bblm ; python3 -m pytest tests/
+.PHONY: all-tests
+all-tests:
+	@$(CONDA_INIT) conda activate bblm ; python3 -m pytest -v tests/
+
+.PHONY: slow-tests
+slow-tests:
+	@$(CONDA_INIT) conda activate bblm ; python3 -m pytest -v -m "slow" tests/
+
+.PHONY: fast-tests
+fast-tests:
+	@$(CONDA_INIT) conda activate bblm ; python3 -m pytest -v -m "not slow" tests/
 
 .PHONY: env
 env:
