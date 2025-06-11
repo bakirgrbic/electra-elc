@@ -1,12 +1,17 @@
 """Torch dataset class for pre-training."""
 
+import transformers
 import torch
 
 
 class Dataset(torch.utils.data.Dataset):
     """Loads and preprocesses the given text data."""
 
-    def __init__(self, paths: list[str], tokenizer):
+    def __init__(
+        self,
+        paths: list[str],
+        tokenizer: transformers.AutoTokenizer,
+    ):
         """Constructor.
 
         Keyword Arguments:
@@ -21,6 +26,11 @@ class Dataset(torch.utils.data.Dataset):
         """Returns length of entire dataset."""
 
         return len(self.data)
+
+    def __getitem__(self, index: int) -> dict:
+        """Returns tokenized item at a given index."""
+
+        return self._get_encoding(self.data[index])
 
     def _read_files(self) -> list[str]:
         """Reads all files in the path of object."""
@@ -38,7 +48,7 @@ class Dataset(torch.utils.data.Dataset):
 
         return lines
 
-    def get_encoding(self, line: str) -> dict:
+    def _get_encoding(self, line: str) -> dict:
         """Creates an encoding for a given line of input."""
         batch = self.tokenizer(
             line, max_length=512, padding="max_length", truncation=True
@@ -58,7 +68,13 @@ class Dataset(torch.utils.data.Dataset):
 
         return {"input_ids": input_ids, "attention_mask": mask, "labels": labels}
 
-    def __getitem__(self, index: int) -> dict:
-        """Returns tokenized item at a given index."""
+    def get_data(self) -> list[str]:
+        return self.data
 
-        return self.get_encoding(self.data[index])
+    def set_data(self, data: list[str]) -> None:
+        self.data = data
+
+    def decrease_length(self, new_data_length: int) -> None:
+        """Decreases dataset to only have up to new_data_length data in it."""
+        data_subset = self.get_data()[:new_data_length]
+        self.set_data(data_subset)
