@@ -60,7 +60,7 @@ def create_dataloaders(
     max_len -- maximum length of words tokenizer will read for a given text
     batch_size -- size of batches to be fed to model for finetuning
 
-    Returns training and testing loaders as a tuple
+    Returns training and testing loaders as a tuple.
     """
     train_dataset = MultiLabelDataset(
         train_data, torch.from_numpy(train_labels), tokenizer, max_len
