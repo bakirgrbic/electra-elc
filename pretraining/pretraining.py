@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import numpy as np
+import transformers
 import torch
 from tqdm.auto import tqdm
 
@@ -10,7 +11,41 @@ from log.my_logger import get_my_logger, log
 from pretraining.dataset import Dataset
 
 
-def train(model, loader, optimizer, device, epochs, logger):
+def get_file_names() -> list[str]:
+    """Gathers all pre-training data file names from data/train_10M dir."""
+
+    return [str(data_file) for data_file in Path("data/train_10M").glob("[!._]*.train")]
+
+
+def create_dataset(
+    data_files: list[str],
+    tokenizer: transformers.AutoTokenizer,
+):
+    """Creates a datalset for pre-training.
+
+    Keyword Arguments:
+    data_files -- list of file names to get data from
+    tokenizer -- transformer tokenizer
+    """
+
+    return Dataset(data_files, tokenizer=tokenizer)
+
+
+def create_dataloader(
+    dataset: torch.utils.data.Dataset,
+    batch_size: int,
+) -> torch.utils.data.DataLoader:
+    """Creates a dataloader for pre-training.
+
+    Keyword Arguments:
+    dataset -- overridden torch Dataset object.
+    batch_size -- size of batches to be fed to model for finetuning
+    """
+
+    return torch.utils.data.DataLoader(dataset, batch_size=batch_size)
+
+
+def pre_train(model, loader, optimizer, device, epochs, logger):
     """Main training loop.
 
     Keyword Arguments:
@@ -54,13 +89,13 @@ def train(model, loader, optimizer, device, epochs, logger):
     log(logger, "Pre-training Done!")
 
 
-def pre_train(tokenizer, model, epochs, learning_rate, model_name):
+def pre_train_pipeline(model, loader, epochs, learning_rate, model_name):
     """Runs pipeline and logs output to logs/model_name folder in project root.
     Also saves model to checkpoints/model_name.
 
     Keyword Arguments:
-    tokenizer -- transformer tokenizer to be used in pre-training
     model -- model to pretrain
+    loader -- data loader
     epochs -- the number of epochs to pre-train model on
     learning_rate -- learning rate for the optimizer
     model_name -- name to save model by
@@ -74,16 +109,9 @@ def pre_train(tokenizer, model, epochs, learning_rate, model_name):
     log(logger, "Loading optimizer")
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
 
-    log(logger, f"Loading data for pre-training model {model_name}")
-    data_files = [
-        str(data_file) for data_file in Path("data/train_10M").glob("[!._]*.train")
-    ]
-    dataset = Dataset(data_files, tokenizer=tokenizer)
-    loader = torch.utils.data.DataLoader(dataset, batch_size=8)
-
     log(logger, f"Using {device} to pre-train for {epochs} epochs!")
     model.to(device)
-    train(model, loader, optimizer, device, epochs, logger)
+    pre_train(model, loader, optimizer, device, epochs, logger)
 
     save_dir = Path("checkpoints") / model_name
     log(logger, f"Saving pre-trained model {model_name} to {save_dir}")
