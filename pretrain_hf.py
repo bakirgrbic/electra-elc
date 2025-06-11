@@ -29,6 +29,7 @@ def get_parser() -> argparse.ArgumentParser:
         help="""Name of tokenizer to pull from huggingface.
                         Default is electra-tiny.""",
     )
+    parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--lr", type=float, default=1e-04, help="learning rate")
 
