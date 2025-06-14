@@ -27,7 +27,7 @@ class Dataset(torch.utils.data.Dataset):
 
         return len(self.data)
 
-    def __getitem__(self, index: int) -> dict:
+    def __getitem__(self, index: int) -> dict[str, torch.Tensor]:
         """Returns tokenized item at a given index."""
 
         return self._get_encoding(self.data[index])
@@ -48,7 +48,7 @@ class Dataset(torch.utils.data.Dataset):
 
         return lines
 
-    def _get_encoding(self, line: str) -> dict:
+    def _get_encoding(self, line: str) -> dict[str, torch.Tensor]:
         """Creates an encoding for a given line of input."""
         batch = self.tokenizer(
             line, max_length=512, padding="max_length", truncation=True
