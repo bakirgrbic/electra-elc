@@ -1,4 +1,4 @@
-"""Torch dataset class for pre-training."""
+"""Dataset class for pre-training."""
 
 import transformers
 import torch
@@ -15,20 +15,20 @@ class Dataset(torch.utils.data.Dataset):
         """Constructor.
 
         Keyword Arguments:
-        paths -- relative file paths to for pre-train data
-        tokenizer -- tokenizer from transformer lib
+        paths -- file paths of pre-train data
+        tokenizer -- transformer tokenizer
         """
         self.paths = paths
         self.tokenizer = tokenizer
         self.data = self._read_files()
 
     def __len__(self) -> int:
-        """Returns length of entire dataset."""
+        """Returns the total sentences to pretrain on."""
 
         return len(self.data)
 
     def __getitem__(self, index: int) -> dict[str, torch.Tensor]:
-        """Returns tokenized item at a given index."""
+        """Returns tokenized sentence at a given index."""
 
         return self._get_encoding(self.data[index])
 
@@ -75,6 +75,6 @@ class Dataset(torch.utils.data.Dataset):
         self.data = data
 
     def decrease_length(self, new_data_length: int) -> None:
-        """Decreases dataset to only have up to new_data_length data in it."""
+        """Reduces dataset size to only have up to new_data_length data in it."""
         data_subset = self.get_data()[:new_data_length]
         self.set_data(data_subset)
