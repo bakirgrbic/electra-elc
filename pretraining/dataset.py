@@ -1,7 +1,17 @@
 """Dataset class for pre-training."""
 
+from enum import Enum
+
 import transformers
 import torch
+
+
+class SpecialTokens(Enum):
+    PAD = 0
+    UNK = 100
+    CLS = 101
+    SEP = 102
+    MASK = 103
 
 
 class Dataset(torch.utils.data.Dataset):
@@ -52,21 +62,33 @@ class Dataset(torch.utils.data.Dataset):
         """Creates an encoding for a given line of input."""
         batch = self.tokenizer(
             line, max_length=512, padding="max_length", truncation=True
-        )  # tokenise all text
+        )
 
-        labels = torch.tensor(batch["input_ids"])  # Ground Truth
-        mask = torch.tensor(batch["attention_mask"])  # Attention Masks
-        input_ids = labels.detach().clone()  # Input to be masked
-        rand = torch.rand(input_ids.shape)
+        labels = torch.tensor(batch["input_ids"])
+        mask = torch.tensor(batch["attention_mask"])
+        input_ids = labels.detach().clone()
 
-        mask_arr = (
-            (rand < 0.15) * (input_ids != 0) * (input_ids != 2) * (input_ids != 3)
-        )  # with a probability of 15%, mask a given word, leave out CLS, SEP
-        # and PAD
-
-        input_ids[mask_arr] = 4  # assign token 4 (=MASK)
+        mask_probability = 0.15
+        self._mask_ids(input_ids, mask_probability)
 
         return {"input_ids": input_ids, "attention_mask": mask, "labels": labels}
+
+    def _mask_ids(self, input_ids: torch.Tensor, mask_probability: float) -> None:
+        """Masks tokens at random given a probability if they are not special tokens
+
+        Keyword Arguments:
+        input_ids -- input_ids from a transformer tokenizer
+        mask_probability -- probability to mask any token in input_ids
+        """
+        rand = torch.rand(input_ids.shape)
+        mask_arr = (
+            (rand < mask_probability)
+            * (input_ids != SpecialTokens.PAD.value)
+            * (input_ids != SpecialTokens.UNK.value)
+            * (input_ids != SpecialTokens.CLS.value)
+            * (input_ids != SpecialTokens.SEP.value)
+        )
+        input_ids[mask_arr] = SpecialTokens.MASK.value
 
     def get_data(self) -> list[str]:
         return self.data
