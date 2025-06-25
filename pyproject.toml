@@ -1,3 +1,15 @@
+[tool.isort]
+src_paths = [
+    "evaluation",
+    "log",
+    "models",
+    "pretraining",
+]
+
+[tool.mypy]
+disallow_untyped_defs = true
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 addopts = "-v"
 markers = [
@@ -7,10 +19,5 @@ testpaths = [
     "tests",
 ]
 
-[tool.isort]
-src_paths = [
-    "evaluation",
-    "log",
-    "models",
-    "pretraining",
-]
+[tool.ruff]
+line-length = 80

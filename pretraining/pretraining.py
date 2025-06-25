@@ -1,11 +1,13 @@
 """Implements pretraining pipeline on BabyLM strict small data."""
 
+import logging
 from pathlib import Path
 
 import numpy as np
-import transformers
 import torch
+import transformers
 from tqdm.auto import tqdm
+from transformers import AutoConfig, AutoModelForMaskedLM
 
 from log.my_logger import get_my_logger, log
 from pretraining.dataset import Dataset
@@ -14,13 +16,17 @@ from pretraining.dataset import Dataset
 def get_file_names() -> list[str]:
     """Gathers all pre-training data file names from data/train_10M dir."""
 
-    return [str(data_file) for data_file in Path("data/train_10M").glob("[!._]*.train")]
+    return [
+        str(data_file)
+
+        for data_file in Path("data/train_10M").glob("[!._]*.train")
+    ]
 
 
 def create_dataset(
     data_files: list[str],
     tokenizer: transformers.AutoTokenizer,
-):
+) -> torch.utils.data.Dataset:
     """Creates a datalset for pre-training.
 
     Keyword Arguments:
@@ -45,7 +51,14 @@ def create_dataloader(
     return torch.utils.data.DataLoader(dataset, batch_size=batch_size)
 
 
-def pre_train(model, loader, optimizer, device, epochs, logger):
+def pre_train(
+    model: AutoModelForMaskedLM,
+    loader: torch.utils.data.DataLoader,
+    optimizer: torch.optim.Adam,
+    device: str,
+    epochs: int,
+    logger: logging.Logger,
+) -> None:
     """Main training loop.
 
     Keyword Arguments:
@@ -70,7 +83,9 @@ def pre_train(model, loader, optimizer, device, epochs, logger):
             attention_mask = batch["attention_mask"].to(device)
             labels = batch["labels"].to(device)
 
-            outputs = model(input_ids, attention_mask=attention_mask, labels=labels)
+            outputs = model(
+                input_ids, attention_mask=attention_mask, labels=labels
+            )
 
             loss = outputs.loss
             loss.backward()
@@ -89,16 +104,21 @@ def pre_train(model, loader, optimizer, device, epochs, logger):
     log(logger, "Pre-training Done!")
 
 
-def pre_train_pipeline(model, loader, epochs, learning_rate, model_name):
+def pre_train_pipeline(
+    model_name: str,
+    loader: torch.utils.data.DataLoader,
+    epochs: int,
+    learning_rate: float,
+) -> None:
     """Runs pipeline and logs output to logs/model_name folder in project root.
     Also saves model to checkpoints/model_name.
 
     Keyword Arguments:
-    model -- model to pretrain
+    model_name -- relative file path of pre-trained model or name from
+                  huggingface
     loader -- data loader
     epochs -- the number of epochs to pre-train model on
     learning_rate -- learning rate for the optimizer
-    model_name -- name to save model by
     """
     device = "cuda" if torch.cuda.is_available() else "cpu"
     TASK_NAME = "pre_training"
@@ -106,11 +126,13 @@ def pre_train_pipeline(model, loader, epochs, learning_rate, model_name):
     logger = get_my_logger(model_name, TASK_NAME)
     log(logger, "Background logger started")
 
-    log(logger, "Loading optimizer")
+    log(logger, "Loading model and optimizer")
+    config = AutoConfig.from_pretrained(model_name)
+    model = AutoModelForMaskedLM.from_config(config)
+    model.to(device)
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
 
     log(logger, f"Using {device} to pre-train for {epochs} epochs!")
-    model.to(device)
     pre_train(model, loader, optimizer, device, epochs, logger)
 
     save_dir = Path("checkpoints") / model_name
