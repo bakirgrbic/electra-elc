@@ -27,7 +27,7 @@ def create_dataset(
     data_files: list[str],
     tokenizer: transformers.AutoTokenizer,
 ) -> torch.utils.data.Dataset:
-    """Creates a datalset for pre-training.
+    """Create a datalset for pre-training.
 
     Keyword Arguments:
     data_files -- list of file names to get data from
@@ -41,7 +41,7 @@ def create_dataloader(
     dataset: torch.utils.data.Dataset,
     batch_size: int,
 ) -> torch.utils.data.DataLoader:
-    """Creates a dataloader for pre-training.
+    """Create a dataloader for pre-training.
 
     Keyword Arguments:
     dataset -- overridden torch Dataset object.
@@ -59,7 +59,7 @@ def pre_train(
     epochs: int,
     logger: logging.Logger,
 ) -> None:
-    """Main training loop.
+    """Run main training loop.
 
     Keyword Arguments:
     model -- model to pretrain
@@ -110,8 +110,7 @@ def pre_train_pipeline(
     epochs: int,
     learning_rate: float,
 ) -> None:
-    """Runs pipeline and logs output to logs/model_name folder in project root.
-    Also saves model to checkpoints/model_name.
+    """Run pipeline and logs output to logs/model_name folder in project root.
 
     Keyword Arguments:
     model_name -- relative file path of pre-trained model or name from
@@ -119,6 +118,8 @@ def pre_train_pipeline(
     loader -- data loader
     epochs -- the number of epochs to pre-train model on
     learning_rate -- learning rate for the optimizer
+
+    Returns nothing but saves model to checkpoints/model_name.
     """
     device = "cuda" if torch.cuda.is_available() else "cpu"
     TASK_NAME = "pre_training"
