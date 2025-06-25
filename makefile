@@ -5,15 +5,15 @@ CONDA_INIT = source $$(conda info --base)/etc/profile.d/conda.sh ; conda activat
 
 .PHONY: all-tests
 all-tests:
-	@$(CONDA_INIT) conda activate bblm ; python3 -m pytest -v tests/
+	@$(CONDA_INIT) conda activate bblm ; python3 -m pytest
 
 .PHONY: slow-tests
 slow-tests:
-	@$(CONDA_INIT) conda activate bblm ; python3 -m pytest -v -m "slow" tests/
+	@$(CONDA_INIT) conda activate bblm ; python3 -m pytest -m "slow"
 
 .PHONY: fast-tests
 fast-tests:
-	@$(CONDA_INIT) conda activate bblm ; python3 -m pytest -v -m "not slow" tests/
+	@$(CONDA_INIT) conda activate bblm ; python3 -m pytest -m "not slow"
 
 .PHONY: env
 env:
