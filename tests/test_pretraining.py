@@ -23,8 +23,8 @@ class TestPretraining:
         return get_file_names()
 
     @pytest.fixture
-    def pt_dataset(self, pt_files):
-        return create_dataset(pt_files, MODEL_NAME)
+    def pt_dataset(self, pt_files, tokenizer):
+        return create_dataset(pt_files, tokenizer)
 
     @pytest.fixture
     def small_pt_dataset(self, pt_dataset):
@@ -68,11 +68,10 @@ class TestPretraining:
         LEARNING_RATE = 2e-05
 
         pre_train_pipeline(
-            model=MODEL_NAME,
+            model_name=MODEL_NAME,
             loader=small_pt_dataloader,
             epochs=EPOCHS,
             learning_rate=LEARNING_RATE,
-            model_name=MODEL_NAME,
         )
 
 
