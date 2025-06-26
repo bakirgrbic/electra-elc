@@ -9,6 +9,9 @@ src_paths = [
 [tool.mypy]
 disallow_untyped_defs = true
 ignore_missing_imports = true
+exclude = [     # Note that this only excludes discovery when using mypy from cli
+    "tests",
+]
 
 [tool.pytest.ini_options]
 addopts = "-v"
@@ -32,6 +35,11 @@ select = [
 ]
 ignore = [
     "D202",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "D",
 ]
 
 [tool.ruff.lint.pydocstyle]

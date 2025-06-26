@@ -2,13 +2,9 @@ import pytest
 import torch
 from transformers import AutoTokenizer
 
-from pretraining.pretraining import (
-    get_file_names,
-    create_dataset,
-    create_dataloader,
-    pre_train_pipeline,
-)
 from pretraining.dataset import SpecialTokens
+from pretraining.pretraining import (create_dataloader, create_dataset,
+                                     get_file_names, pre_train_pipeline)
 
 MODEL_NAME = "bsu-slim/electra-tiny"
 
@@ -19,7 +15,8 @@ def tokenizer():
 
 
 class TestPretraining:
-    SMALL_DATASET_SIZE = 100
+    SMALL_DATASET_LENGTH = 100
+    FULL_DATASET_LENGTH = 1179020
 
     @pytest.fixture
     def pt_files(self):
@@ -31,7 +28,7 @@ class TestPretraining:
 
     @pytest.fixture
     def small_pt_dataset(self, pt_dataset):
-        pt_dataset.decrease_length(self.SMALL_DATASET_SIZE)
+        pt_dataset.decrease_length(self.SMALL_DATASET_LENGTH)
 
         return pt_dataset
 
@@ -42,19 +39,28 @@ class TestPretraining:
         return create_dataloader(small_pt_dataset, BATCH_SIZE)
 
     def test_pretraining_exists(self, pt_files):
-        assert len(pt_files) != 0, "No pretraining data found in data/train_10M/"
-
-    def test_confirm_full_pretraining_data_length(self, pt_dataset):
-        FULL_DATASET_LENGTH = 1179020
-
-        assert len(pt_dataset) == FULL_DATASET_LENGTH, (
-            "Length of pretraining data is not the full 10M tokens for the strict small track."
+        assert len(pt_files) != 0, (
+            "No pretraining data found in data/train_10M/"
         )
 
-    def test_decrease_length(self, small_pt_dataset):
-        assert len(small_pt_dataset) == self.SMALL_DATASET_SIZE, (
-            "Length of small pretraining data does not correspond to the desired amount of data."
-        )
+    @pytest.mark.parametrize(
+        "dataset, expected_length",
+        [
+            pytest.param(
+                "pt_dataset",
+                FULL_DATASET_LENGTH,
+                id="full_dataset",
+            ),
+            pytest.param(
+                "small_pt_dataset",
+                SMALL_DATASET_LENGTH,
+                id="small_dataset",
+            ),
+        ],
+    )
+    def test_length(self, dataset, expected_length, request):
+        dataset = request.getfixturevalue(dataset)
+        assert len(dataset) == expected_length
 
     @pytest.mark.slow
     def test_pre_train_pipeline_raise_no_error(self, small_pt_dataloader):
@@ -145,7 +151,9 @@ class TestDataset:
         ],
     )
     def test_mask_ids(self, input_id, mask_prob, expected, empty_dataset):
-        torch.manual_seed(0)  # Needed so torch generated probabilities are reproducible
+        torch.manual_seed(
+            0
+        )  # Needed so torch generated probabilities are reproducible
         input_id = torch.tensor(input_id)
         expected = torch.tensor(expected)
 
