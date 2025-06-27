@@ -1,9 +1,11 @@
 import pytest
 from transformers import AutoTokenizer
 
-from evaluation.web_of_science.wos import load_data, create_dataloaders, wos_evaluation
+from evaluation.web_of_science.wos import (create_dataloaders, load_data,
+                                           wos_evaluation)
 
 MODEL_NAME = "bsu-slim/electra-tiny"
+
 
 @pytest.fixture
 def wos_data():

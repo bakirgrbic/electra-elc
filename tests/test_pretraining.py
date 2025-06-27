@@ -9,7 +9,7 @@ from pretraining.pretraining import (create_dataloader, create_dataset,
 MODEL_NAME = "bsu-slim/electra-tiny"
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def tokenizer():
     return AutoTokenizer.from_pretrained(MODEL_NAME)
 
@@ -18,21 +18,21 @@ class TestPretraining:
     SMALL_DATASET_LENGTH = 100
     FULL_DATASET_LENGTH = 1179020
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def pt_files(self):
         return get_file_names()
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def pt_dataset(self, pt_files, tokenizer):
         return create_dataset(pt_files, tokenizer)
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def small_pt_dataset(self, pt_dataset):
         pt_dataset.decrease_length(self.SMALL_DATASET_LENGTH)
 
         return pt_dataset
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def small_pt_dataloader(self, small_pt_dataset):
         BATCH_SIZE = 8
 
