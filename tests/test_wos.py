@@ -1,7 +1,7 @@
 import pytest
 from transformers import AutoTokenizer
 
-from evaluation.web_of_science.wos import (create_dataloaders, load_data,
+from src.pipelines.finetuning.web_of_science.wos import (create_dataloaders, load_data,
                                            wos_evaluation)
 
 MODEL_NAME = "bsu-slim/electra-tiny"

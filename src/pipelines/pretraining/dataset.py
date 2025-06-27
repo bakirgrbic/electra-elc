@@ -2,8 +2,8 @@
 
 from enum import Enum
 
-import transformers
 import torch
+import transformers
 
 
 class SpecialTokens(Enum):
@@ -71,9 +71,15 @@ class Dataset(torch.utils.data.Dataset):
         mask_probability = 0.15
         self._mask_ids(input_ids, mask_probability)
 
-        return {"input_ids": input_ids, "attention_mask": mask, "labels": labels}
+        return {
+            "input_ids": input_ids,
+            "attention_mask": mask,
+            "labels": labels,
+        }
 
-    def _mask_ids(self, input_ids: torch.Tensor, mask_probability: float) -> None:
+    def _mask_ids(
+        self, input_ids: torch.Tensor, mask_probability: float
+    ) -> None:
         """Masks tokens at random given a probability if they are not special tokens
 
         Keyword Arguments:

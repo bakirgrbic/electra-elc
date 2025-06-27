@@ -2,9 +2,11 @@ import pytest
 import torch
 from transformers import AutoTokenizer
 
-from pretraining.dataset import SpecialTokens
-from pretraining.pretraining import (create_dataloader, create_dataset,
-                                     get_file_names, pre_train_pipeline)
+from src.pipelines.pretraining.dataset import SpecialTokens
+from src.pipelines.pretraining.pretraining import (create_dataloader,
+                                                   create_dataset,
+                                                   get_file_names,
+                                                   pre_train_pipeline)
 
 MODEL_NAME = "bsu-slim/electra-tiny"
 

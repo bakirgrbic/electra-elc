@@ -1,15 +1,13 @@
 [tool.isort]
 src_paths = [
-    "evaluation",
-    "log",
-    "models",
-    "pretraining",
+    "src",
+    "utils",
 ]
 
 [tool.mypy]
 disallow_untyped_defs = true
 ignore_missing_imports = true
-exclude = [     # Note that this only excludes discovery when using mypy from cli
+exclude = [ # Note that this only excludes discovery when using mypy from cli
     "tests",
 ]
 

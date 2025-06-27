@@ -2,18 +2,19 @@
 classification task.
 """
 
-from enum import Enum
 import logging
+from enum import Enum
 
 import numpy as np
-from sklearn.metrics import accuracy_score
 import torch
 import transformers
+from sklearn.metrics import accuracy_score
 from tqdm.auto import tqdm
 
-from evaluation.web_of_science.auto import AutoClass
-from evaluation.web_of_science.multilabeldataset import MultiLabelDataset
-from log.my_logger import get_my_logger, log
+from src.pipelines.finetuning.web_of_science.auto import AutoClass
+from src.pipelines.finetuning.web_of_science.multilabeldataset import \
+    MultiLabelDataset
+from utils.my_logger import get_my_logger, log
 
 
 class DocumentTopics(Enum):
@@ -70,7 +71,10 @@ def create_dataloaders(
     )
 
     training_loader = torch.utils.data.DataLoader(
-        dataset=train_dataset, batch_size=batch_size, shuffle=True, num_workers=0
+        dataset=train_dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=0,
     )
     testing_loader = torch.utils.data.DataLoader(
         dataset=test_dataset, batch_size=batch_size, shuffle=True, num_workers=0
@@ -184,7 +188,7 @@ def wos_evaluation(
     testing_loader: torch.utils.data.DataLoader,
     epochs: int,
     learning_rate: float,
-):
+) -> None:
     """Sets up and completes finetuning for wos task.
 
     Keyword Arguments:
@@ -211,4 +215,12 @@ def wos_evaluation(
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
 
     log(logger, f"Using {device} to fine-tune for {epochs} epochs!")
-    finetune(model, training_loader, testing_loader, optimizer, device, epochs, logger)
+    finetune(
+        model,
+        training_loader,
+        testing_loader,
+        optimizer,
+        device,
+        epochs,
+        logger,
+    )

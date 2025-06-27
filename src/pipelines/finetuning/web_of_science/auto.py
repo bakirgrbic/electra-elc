@@ -28,7 +28,9 @@ class AutoClass(torch.nn.Module):
 
         Returns the softmax distribution for all classes
         """
-        output_transformer = self.transformer_layer(input_ids=input_ids, attention_mask=attention_mask)
+        output_transformer = self.transformer_layer(
+            input_ids=input_ids, attention_mask=attention_mask
+        )
         last_hidden_state = output_transformer.last_hidden_state
         cls_pooler = last_hidden_state[:, 0]
         output = self.classifier(cls_pooler)

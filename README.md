@@ -1,8 +1,8 @@
 # electra-elc
 
 ## Description
-Final project for CS 436 to learn more about pre-training and time 
-optimizations to the process.
+Project to better undestand Language Models (LMs), pre-training, finetuning, 
+and modifying LMs.
 
 NOTE:
 This project is still a work in progress.
@@ -91,6 +91,6 @@ Results for these evaluations will be found in the `evaluation-pipeline-2024/res
 
 
 ## Acknowledgments
-Code from [models/electra_elc.py](./models/electra_elc.py) is a derivative work
+Code from [src/models/electra_elc.py](./models/electra_elc.py) is a derivative work
 of [transformers ELECTRA model](https://github.com/huggingface/transformers/blob/v4.51.3/src/transformers/models/electra/modeling_electra.py) 
 and [ELC-BERT zero initialization model](https://github.com/ltgoslo/elc-bert/blob/main/models/model_elc_bert_zero.py).

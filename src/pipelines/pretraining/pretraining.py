@@ -9,8 +9,8 @@ import transformers
 from tqdm.auto import tqdm
 from transformers import AutoConfig, AutoModelForMaskedLM
 
-from log.my_logger import get_my_logger, log
-from pretraining.dataset import Dataset
+from src.pipelines.pretraining.dataset import Dataset
+from utils.my_logger import get_my_logger, log
 
 
 def get_file_names() -> list[str]:
