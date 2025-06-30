@@ -6,9 +6,9 @@ and modifying LMs.
 
 NOTE:
 This project is still a work in progress.
-- ELC-BERT doesn't work with eval_wos.py and eval_blimp.sh. Not tested for finetune.sh
-- ELECTRA-ELC doesn't work with eval_wos.py and not tested for finetune.sh
-- ELECTRA-PT work with all scripts (This is a vanilla ELECTRA-tiny)
+- eLc-bert doesn't work with finetune.py and eval_blimp.sh. Not tested for finetune.sh
+- tiny-electra-elc doesn't work with finetune.py and not tested for finetune.sh
+- tiny-electra work with all scripts (This is a vanilla ELECTRA-tiny)
 
 ## How to Run
 Tested on MacOS and AWS Sagemaker environments. 
@@ -26,18 +26,19 @@ git lfs checkout
 ### Data
 Make sure to download necessary data as described in [data/README.md](./data/README.md). All data must be in 
 the `data` directory except for the BabyLM 2024 evaluation pipeline data which must be placed in the root of
-`evaluation/evaluation-pipeline-2024`.
+`src/pipelines/finetuning/evaluation-pipeline-2024`.
 
 ### Pretraining
 
 To pretrain a model from huggingface use the following command:
 ```shell
-./pretrain_hf.py [-h] [--model-config MODEL_CONFIG] [--tokenizer-config TOKENIZER_CONFIG] [--epochs EPOCHS] [--lr LR]
+python3 -m src.pretrain.py [-h] [-m MODEL_NAME] [-t TOKENIZER_NAME] [-bs BATCH_SIZE] [-e EPOCHS] [-lr LEARNING_RATE]
 ```
+Please use the help flag on the script to see command line arguments default values.
 
 To pretrain the ELECTRA_ELC model use the following command:
 ```shell
-./pretrain_electra_elc.py [-h] [--epochs EPOCHS] [--lr LR]                                                                                                                   
+python3 -m src/pretrain_electra_elc.py [-h] [--epochs EPOCHS] [--lr LR]
 ```
 
 ### Evaluation
@@ -45,8 +46,9 @@ To pretrain the ELECTRA_ELC model use the following command:
 
 To pretrain the ELECTRA_ELC model use the following command:
 ```shell
-./eval_wos.py [-h] [--model MODEL] [--tokenizer-config TOKENIZER_CONFIG] [--max-len MAX_LEN] [--batch-size BATCH_SIZE] [--epochs EPOCHS] [--lr LR]
+python3 -m src.finetune.py [-h] [-m MODEL_NAME] [-t TOKENIZER_NAME] [-ml MAX_LEN] [-bs BATCH_SIZE] [-e EPOCHS] [-lr LEARNING_RATE]
 ```
+Please use the help flag on the script to see command line arguments default values.
 
 #### evaluation-pipeline-2024
 1. Pull the submodule repository using the following commands:
@@ -76,9 +78,9 @@ python -m lm_eval --model hf-mlm \
     --log_samples \
     --output_path results/blimp/${MODEL_BASENAME}/blimp_results.json
 ```
-Run the following command to evaluate on BLiMP for given model path such as ELECTRA_PT.
+Run the following command to evaluate on BLiMP for given model path such as tiny-electra.
 ```shell
-./eval_blimp.sh ../../checkpoints/ELECTRA_PT
+./eval_blimp.sh ../../log/tiny-electra/version01
 ```
 
 To Evaluate on (Super)GLUE run the following command:

@@ -2,11 +2,10 @@ import pytest
 import torch
 from transformers import AutoTokenizer
 
-from src.pipelines.pretraining.dataset import SpecialTokens
-from src.pipelines.pretraining.pretraining import (create_dataloader,
-                                                   create_dataset,
-                                                   get_file_names,
-                                                   pre_train_pipeline)
+from src.tasks.pretraining.dataset import SpecialTokens
+from src.tasks.pretraining.pretraining import (create_dataloader,
+                                               create_dataset, get_file_names,
+                                               pre_train_task)
 
 MODEL_NAME = "bsu-slim/electra-tiny"
 
@@ -17,7 +16,7 @@ def tokenizer():
 
 
 class TestPretraining:
-    SMALL_DATASET_LENGTH = 100
+    SMALL_DATASET_LENGTH = 10
     FULL_DATASET_LENGTH = 1179020
 
     @pytest.fixture(scope="class")
@@ -65,15 +64,16 @@ class TestPretraining:
         assert len(dataset) == expected_length
 
     @pytest.mark.slow
-    def test_pre_train_pipeline_raise_no_error(self, small_pt_dataloader):
+    def test_pre_train_task_raise_no_error(self, small_pt_dataloader, tmp_path):
         EPOCHS = 1
         LEARNING_RATE = 2e-05
 
-        pre_train_pipeline(
+        pre_train_task(
             model_name=MODEL_NAME,
             loader=small_pt_dataloader,
             epochs=EPOCHS,
             learning_rate=LEARNING_RATE,
+            save_dir=tmp_path
         )
 
 

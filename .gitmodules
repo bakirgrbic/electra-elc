@@ -1,3 +1,0 @@
-[submodule "src/pipelines/finetuning/evaluation-pipeline-2024"]
-	path = src/pipelines/finetuning/evaluation-pipeline-2024
-	url = https://github.com/babylm/evaluation-pipeline-2024.git

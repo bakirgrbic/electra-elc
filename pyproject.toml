@@ -19,6 +19,7 @@ markers = [
 testpaths = [
     "tests",
 ]
+tmp_path_retention_policy = "none"
 
 [tool.ruff]
 line-length = 80

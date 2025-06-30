@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Script that pretrains ELECTRA_ELC model."""
+# TODO: combine this script with normal pretrain
 
 import argparse
 

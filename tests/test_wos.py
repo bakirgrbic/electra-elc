@@ -1,8 +1,8 @@
 import pytest
 from transformers import AutoTokenizer
 
-from src.pipelines.finetuning.web_of_science.wos import (create_dataloaders, load_data,
-                                           wos_evaluation)
+from src.tasks.finetuning.web_of_science.wos import (create_dataloaders,
+                                                     load_data, wos_task)
 
 MODEL_NAME = "bsu-slim/electra-tiny"
 
@@ -72,13 +72,13 @@ def test_first_sample_matches_for_train_and_data(wos_data):
 
 
 @pytest.mark.slow
-def test_wos_evaluation_raise_no_error(small_wos_dataloaders):
+def test_wos_task_raise_no_error(small_wos_dataloaders):
     TRAIN = 0
-    TEST = 0
+    TEST = 1
     EPOCHS = 1
     LEARNING_RATE = 2e-05
 
-    wos_evaluation(
+    wos_task(
         model_name=MODEL_NAME,
         training_loader=small_wos_dataloaders[TRAIN],
         testing_loader=small_wos_dataloaders[TEST],

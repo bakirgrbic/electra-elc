@@ -1,7 +1,6 @@
 .DS_Store
-tmp/
 log/
-checkpoints/
+tmp/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

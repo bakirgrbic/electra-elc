@@ -1,9 +1,8 @@
-"""Tools to finetune pre-trained models on web of science (wos) document
-classification task.
-"""
+"""Implements web of science (wos) document classification finetuning task."""
 
 import logging
 from enum import Enum
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -11,13 +10,16 @@ import transformers
 from sklearn.metrics import accuracy_score
 from tqdm.auto import tqdm
 
-from src.pipelines.finetuning.web_of_science.auto import AutoClass
-from src.pipelines.finetuning.web_of_science.multilabeldataset import \
+from src.tasks.finetuning.web_of_science.auto import AutoClass
+from src.tasks.finetuning.web_of_science.multilabeldataset import \
     MultiLabelDataset
-from utils.my_logger import get_my_logger, log
+
+logger = logging.getLogger("main." + __name__)
 
 
 class DocumentTopics(Enum):
+    """Represents class number in multilabel classification."""
+
     COMPUTER_SCIENCE = 0
     ELECTRICAL_ENGINEERING = 1
     PSYCHOLOGY = 2
@@ -28,7 +30,19 @@ class DocumentTopics(Enum):
 
 
 def load_data() -> tuple[list[str], np.ndarray, list[str], np.ndarray]:
-    """Loads and splits wos evaluation data into train and test sets."""
+    """Load and split wos data into train and test sets.
+
+    Returns
+    -------
+    train_data
+        List of documents.
+    train_labels
+        List of class labels corresponding to training documents.
+    test_data
+        List of documents.
+    test_labels
+        List of labels corresponding to testing documents.
+    """
     with open("./data/wos/X.txt") as f:
         data = [line.strip() for line in f.readlines()]
     with open("./data/wos/YL1.txt") as f:
@@ -50,18 +64,31 @@ def create_dataloaders(
     max_len: int,
     batch_size: int,
 ) -> tuple[torch.utils.data.DataLoader, torch.utils.data.DataLoader]:
-    """Creates train and test data loaders for finetuning.
+    """Create train and test dataloaders for finetuning.
 
-    Keyword Arguments:
-    train_data -- list of documents
-    train_labels -- list of labels corresponding to training documents
-    test_data -- list of documents
-    test_labels -- list of labels corresponding to training documents
-    tokenizer -- transformer tokenizer
-    max_len -- maximum length of words tokenizer will read for a given text
-    batch_size -- size of batches to be fed to model for finetuning
+    Parameters
+    ----------
+    train_data
+        List of documents.
+    train_labels
+        List of class labels corresponding to training documents.
+    test_data
+        List of documents.
+    test_labels
+        List of labels corresponding to testing documents.
+    tokenizer
+        Transformer tokenizer.
+    max_len
+        Maximum length of words tokenizer will read for a given text.
+    batch_size
+        Batch size to use before updating model weights.
 
-    Returns training and testing loaders as a tuple.
+    Returns
+    -------
+    training_loader
+        Train data loader.
+    testing_loader
+        Test data loader.
     """
     train_dataset = MultiLabelDataset(
         train_data, torch.from_numpy(train_labels), tokenizer, max_len
@@ -84,7 +111,7 @@ def create_dataloaders(
 
 
 def loss_fn(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-    """Loss function used for evaluation."""
+    """Loss function used for finetuning."""
 
     return torch.nn.CrossEntropyLoss()(outputs, targets)
 
@@ -95,15 +122,23 @@ def train(
     optimizer: torch.optim.Adam,
     device: str,
 ) -> torch.Tensor:
-    """Training loop for finetuning on wos task.
+    """Training loop for wos finetuning task.
 
-    Keyword Arguments:
-    model -- torch model to train
-    training_loader -- train data loader
-    optimizer -- torch optimizer
-    device -- which hardware device to use
+    Parameters
+    ----------
+    model
+        Transformer model to pretrain.
+    training_loader
+        Train data loader.
+    optimizer
+        Torch optimizer.
+    device
+        Which hardware device to use.
 
-    Returns loss for training epoch
+    Returns
+    -------
+    loss
+        Most recent loss for training epoch.
     """
     model.train()
 
@@ -123,14 +158,23 @@ def train(
 def test(
     model: AutoClass, testing_loader: torch.utils.data.DataLoader, device: str
 ) -> tuple[torch.Tensor, torch.Tensor]:
-    """Testing loop for finetuning on wos task.
+    """Testing loop for wos finetuning task.
 
-    Keyword Arguments:
-    model -- torch model to validate
-    testing_loader -- test data loader
-    device -- which hardware device to use
+    Parameters
+    ----------
+    model
+        Transformer model to pretrain.
+    testing_loader
+        Test data loader
+    device
+        Which hardware device to use.
 
-    Returns tuple of model guesses and actual label
+    Returns
+    -------
+    fin_outputs
+        Model guesses for a document.
+    fin_targets
+        Labels associated with document.
     """
     model.eval()
     fin_targets = []
@@ -155,66 +199,71 @@ def finetune(
     optimizer: torch.optim.Adam,
     device: str,
     epochs: int,
-    logger: logging.Logger,
 ) -> None:
-    """Main loop that runs training and testing loops.
+    """Run main finetuning loop.
 
-    Keyword Arguments:
-    model -- torch model to validate
-    training_loader -- train data loader
-    testing_loader -- test data loader
-    optimizer -- torch optimizer
-    device -- which hardware device to use
-    epochs -- the number of epochs to finetune model on
-    logger -- logging.Logger object to log information
+    Parameters
+    ----------
+    model
+        Transformer model to pretrain.
+    training_loader
+        Train data loader.
+    testing_loader
+        Test data loader.
+    optimizer
+        Torch optimizer.
+    device
+        Which hardware device to use.
+    epochs
+        Number of epochs to pre-train for.
     """
 
     for epoch in range(epochs):
-        log(logger, f"Begining Fine Tuning on Epoch {epoch}")
+        logger.info(f"Begining wos finetuning epoch {epoch}")
         loss = train(model, training_loader, optimizer, device)
-        log(logger, f"Epoch: {epoch}, Loss:  {loss.item()}")
+        logger.info(f"Epoch: {epoch}, Loss: {loss.item()}")
         guess, targets = test(model, testing_loader, device)
         guesses = torch.argmax(guess, dim=1)
-        log(
-            logger,
-            f"Epoch {epoch}'s arracy on test set {accuracy_score(guesses, targets)}",
+        logger.info(
+            f"Epoch {epoch}'s arracy on test set {accuracy_score(guesses, targets)}"
         )
-    log(logger, "Fine-tuning Done!")
 
 
-def wos_evaluation(
+def wos_task(
     model_name: str,
     training_loader: torch.utils.data.DataLoader,
     testing_loader: torch.utils.data.DataLoader,
     epochs: int,
     learning_rate: float,
 ) -> None:
-    """Sets up and completes finetuning for wos task.
+    """Run wos finetuing task.
 
     Keyword Arguments:
-    model_name -- relative file path of pre-trained model or name from
-                  huggingface
-    training_loader -- train data loader
-    testing_loader -- test data loader
-    epochs -- the number of epochs to finetune model on
-    learning_rate -- learning rate for finetuning
+    model_name
+        Name of huggingface model or relative file path of a local model.
+    training_loader
+        Train data loader.
+    testing_loader
+        Test data loader.
+    epochs
+        Number of epochs to pre-train for.
+    learning_rate
+        Learning rate for the optimizer.
 
-    Returns nothing but logs output to logs/model_name folder in project root.
+    Returns
+    -------
+    None
     """
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     NUM_OUT = len(DocumentTopics)
-    TASK_NAME = "wos_evaluation"
 
-    logger = get_my_logger(model_name, TASK_NAME)
-    log(logger, "Background logger started")
-
-    log(logger, "Loading model and optimizer")
     model = AutoClass(model_name, NUM_OUT)
     model.to(device)
+
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
 
-    log(logger, f"Using {device} to fine-tune for {epochs} epochs!")
+    logger.info(f"Wos finetuning start with {device}")
     finetune(
         model,
         training_loader,
@@ -222,5 +271,5 @@ def wos_evaluation(
         optimizer,
         device,
         epochs,
-        logger,
     )
+    logger.info("Wos finetuning done!")
